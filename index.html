@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,126 +7,272 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    /* ── Theme tokens ── */
     :root {
       --primary: #6c63ff;
       --primary-dark: #574fd6;
       --accent: #ff6584;
       --free-color: #22c55e;
       --paid-color: #f59e0b;
-      --bg-from: #0f0c29;
-      --bg-via: #302b63;
-      --bg-to: #24243e;
-      --card-bg: rgba(255,255,255,0.06);
-      --card-border: rgba(255,255,255,0.10);
+      --radius: 14px;
+      --transition: all 0.3s ease;
+    }
+
+    /* Light theme */
+    [data-theme="light"] {
+      --bg: linear-gradient(135deg, #e8e0ff 0%, #f3e8ff 40%, #e0f0ff 100%);
+      --surface: rgba(255,255,255,0.75);
+      --surface-border: rgba(108,99,255,0.15);
+      --text: #1e1b4b;
+      --text-muted: #6b7280;
+      --text-head: #4c1d95;
+      --row-hover: rgba(108,99,255,0.07);
+      --input-bg: rgba(255,255,255,0.9);
+      --input-border: rgba(108,99,255,0.25);
+      --badge-bg: rgba(108,99,255,0.1);
+      --badge-color: #6c63ff;
+      --badge-border: rgba(108,99,255,0.25);
+      --thead-bg: rgba(108,99,255,0.08);
+      --row-border: rgba(0,0,0,0.05);
+      --shadow: 0 8px 32px rgba(108,99,255,0.12);
+      --cat-idle: rgba(108,99,255,0.1);
+      --cat-idle-text: #6c63ff;
+      --cat-idle-border: rgba(108,99,255,0.2);
+      --cat-active: linear-gradient(135deg, #6c63ff, #a78bfa);
+      --cat-active-text: #fff;
+      --footer-color: #9ca3af;
+      --toggle-bg: #e5e7eb;
+      --toggle-knob: #6c63ff;
+      --ch-num-color: #6c63ff;
+      --title-gradient: linear-gradient(135deg, #1e1b4b 30%, #6c63ff 100%);
+      --select-bg: rgba(255,255,255,0.95);
+      --select-color: #1e1b4b;
+    }
+
+    /* Dark theme */
+    [data-theme="dark"] {
+      --bg: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+      --surface: rgba(255,255,255,0.06);
+      --surface-border: rgba(255,255,255,0.10);
       --text: #f1f5f9;
       --text-muted: #94a3b8;
+      --text-head: #a78bfa;
       --row-hover: rgba(108,99,255,0.12);
       --input-bg: rgba(255,255,255,0.07);
-      --radius: 14px;
+      --input-border: rgba(255,255,255,0.15);
+      --badge-bg: rgba(108,99,255,0.18);
+      --badge-color: #c4b5fd;
+      --badge-border: rgba(108,99,255,0.3);
+      --thead-bg: rgba(108,99,255,0.15);
+      --row-border: rgba(255,255,255,0.05);
       --shadow: 0 8px 32px rgba(0,0,0,0.4);
+      --cat-idle: rgba(255,255,255,0.07);
+      --cat-idle-text: #c4b5fd;
+      --cat-idle-border: rgba(255,255,255,0.12);
+      --cat-active: linear-gradient(135deg, #6c63ff, #a78bfa);
+      --cat-active-text: #fff;
+      --footer-color: #64748b;
+      --toggle-bg: #374151;
+      --toggle-knob: #a78bfa;
+      --ch-num-color: #a78bfa;
+      --title-gradient: linear-gradient(135deg, #fff 30%, #a78bfa 100%);
+      --select-bg: #1e1b4b;
+      --select-color: #f1f5f9;
     }
 
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: linear-gradient(135deg, var(--bg-from) 0%, var(--bg-via) 50%, var(--bg-to) 100%);
+      background: var(--bg);
       min-height: 100vh;
       color: var(--text);
       padding: 0 0 60px;
+      transition: background 0.35s ease, color 0.35s ease;
     }
 
-    /* Header */
+    /* ── Header ── */
     .header {
       text-align: center;
-      padding: 48px 20px 32px;
+      padding: 40px 20px 24px;
       position: relative;
     }
-    .header::after {
-      content: '';
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .header h1 {
+      font-size: clamp(1.7rem, 5vw, 2.7rem);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: var(--title-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .header-bar {
       display: block;
       width: 80px;
       height: 4px;
       background: linear-gradient(90deg, var(--primary), var(--accent));
       border-radius: 2px;
-      margin: 16px auto 0;
+      margin: 12px auto 0;
     }
-    .header h1 {
-      font-size: clamp(1.8rem, 5vw, 2.8rem);
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #fff 30%, #a78bfa 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .header p {
+    .header-sub {
       color: var(--text-muted);
-      margin-top: 8px;
-      font-size: 0.95rem;
+      margin-top: 6px;
+      font-size: 0.92rem;
     }
 
-    /* Container */
+    /* ── Dark mode toggle ── */
+    .dark-toggle {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+      padding: 6px 12px;
+      border-radius: 50px;
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      transition: var(--transition);
+      backdrop-filter: blur(8px);
+    }
+    .dark-toggle:hover { box-shadow: 0 2px 12px rgba(108,99,255,0.2); }
+    .toggle-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .toggle-switch {
+      width: 38px;
+      height: 20px;
+      background: var(--toggle-bg);
+      border-radius: 50px;
+      position: relative;
+      transition: background 0.3s;
+    }
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--toggle-knob);
+      top: 3px;
+      left: 3px;
+      transition: transform 0.3s ease;
+    }
+    [data-theme="dark"] .toggle-switch::after {
+      transform: translateX(18px);
+    }
+
+    /* ── Container ── */
     .container {
       max-width: 1100px;
       margin: 0 auto;
       padding: 0 16px;
     }
 
-    /* Tab buttons */
+    /* ── Tab buttons (Free/Paid) ── */
     .tab-bar {
       display: flex;
       gap: 12px;
       justify-content: center;
-      margin-bottom: 28px;
+      margin-bottom: 16px;
       flex-wrap: wrap;
     }
     .tab-btn {
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 12px 32px;
-      border: none;
+      padding: 11px 30px;
+      border: 2px solid transparent;
       border-radius: 50px;
-      font-size: 1rem;
+      font-size: 0.97rem;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.25s ease;
+      transition: var(--transition);
       letter-spacing: 0.3px;
     }
+    .tab-btn .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
     .tab-btn.free {
-      background: rgba(34,197,94,0.15);
-      color: #4ade80;
-      border: 2px solid rgba(34,197,94,0.3);
+      background: rgba(34,197,94,0.12);
+      color: #16a34a;
+      border-color: rgba(34,197,94,0.3);
     }
+    [data-theme="dark"] .tab-btn.free { color: #4ade80; }
     .tab-btn.free.active, .tab-btn.free:hover {
       background: linear-gradient(135deg, #16a34a, #22c55e);
       color: #fff;
       border-color: transparent;
-      box-shadow: 0 4px 20px rgba(34,197,94,0.4);
+      box-shadow: 0 4px 18px rgba(34,197,94,0.35);
       transform: translateY(-2px);
     }
     .tab-btn.paid {
-      background: rgba(245,158,11,0.15);
-      color: #fbbf24;
-      border: 2px solid rgba(245,158,11,0.3);
+      background: rgba(245,158,11,0.12);
+      color: #d97706;
+      border-color: rgba(245,158,11,0.3);
     }
+    [data-theme="dark"] .tab-btn.paid { color: #fbbf24; }
     .tab-btn.paid.active, .tab-btn.paid:hover {
       background: linear-gradient(135deg, #d97706, #f59e0b);
       color: #fff;
       border-color: transparent;
-      box-shadow: 0 4px 20px rgba(245,158,11,0.4);
+      box-shadow: 0 4px 18px rgba(245,158,11,0.35);
       transform: translateY(-2px);
     }
-    .tab-btn .dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: currentColor;
+
+    /* ── Category bar ── */
+    .cat-bar-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      margin-bottom: 20px;
+      padding-bottom: 4px;
+    }
+    .cat-bar-wrap::-webkit-scrollbar { display: none; }
+    .cat-bar {
+      display: flex;
+      gap: 8px;
+      width: max-content;
+      margin: 0 auto;
+      padding: 0 2px;
+    }
+    .cat-btn {
+      padding: 8px 18px;
+      border-radius: 50px;
+      border: 1.5px solid var(--cat-idle-border);
+      background: var(--cat-idle);
+      color: var(--cat-idle-text);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+    .cat-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 12px rgba(108,99,255,0.2);
+    }
+    .cat-btn.active {
+      background: var(--cat-active);
+      color: var(--cat-active-text);
+      border-color: transparent;
+      box-shadow: 0 4px 16px rgba(108,99,255,0.3);
+      transform: translateY(-1px);
     }
 
-    /* Filter bar */
+    /* ── Filter bar ── */
     .filter-bar {
       display: flex;
-      gap: 12px;
-      margin-bottom: 18px;
+      gap: 10px;
+      margin-bottom: 14px;
       flex-wrap: wrap;
       align-items: center;
     }
@@ -145,12 +291,12 @@
     }
     .search-input {
       width: 100%;
-      padding: 12px 14px 12px 42px;
+      padding: 11px 14px 11px 42px;
       background: var(--input-bg);
-      border: 1.5px solid var(--card-border);
+      border: 1.5px solid var(--input-border);
       border-radius: 50px;
       color: var(--text);
-      font-size: 0.95rem;
+      font-size: 0.93rem;
       outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
       backdrop-filter: blur(6px);
@@ -158,226 +304,221 @@
     .search-input::placeholder { color: var(--text-muted); }
     .search-input:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(108,99,255,0.2);
+      box-shadow: 0 0 0 3px rgba(108,99,255,0.18);
     }
     .lang-select {
-      padding: 12px 18px;
-      background: var(--input-bg);
-      border: 1.5px solid var(--card-border);
+      padding: 11px 16px;
+      background: var(--select-bg);
+      border: 1.5px solid var(--input-border);
       border-radius: 50px;
-      color: var(--text);
-      font-size: 0.95rem;
+      color: var(--select-color);
+      font-size: 0.93rem;
       outline: none;
       cursor: pointer;
       transition: border-color 0.2s, box-shadow 0.2s;
-      backdrop-filter: blur(6px);
-      min-width: 160px;
+      min-width: 155px;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236c63ff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
     }
-    .lang-select option { background: #1e1b4b; color: var(--text); }
+    .lang-select option { background: var(--select-bg); color: var(--select-color); }
     .lang-select:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(108,99,255,0.2);
+      box-shadow: 0 0 0 3px rgba(108,99,255,0.18);
     }
 
-    /* Result counter */
+    /* ── Result bar ── */
     .result-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 14px;
-      min-height: 28px;
+      margin-bottom: 12px;
+      min-height: 26px;
       flex-wrap: wrap;
       gap: 8px;
     }
     .result-count {
-      font-size: 0.88rem;
+      font-size: 0.87rem;
       color: var(--text-muted);
     }
-    .result-count span {
-      color: var(--text);
-      font-weight: 700;
-    }
+    .result-count span { color: var(--text); font-weight: 700; }
     .clear-btn {
       display: none;
       align-items: center;
       gap: 6px;
-      padding: 6px 16px;
-      background: rgba(255,100,132,0.15);
+      padding: 5px 14px;
+      background: rgba(255,100,132,0.12);
       border: 1.5px solid rgba(255,100,132,0.3);
       border-radius: 50px;
       color: #fb7185;
-      font-size: 0.85rem;
+      font-size: 0.83rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: var(--transition);
     }
-    .clear-btn:hover {
-      background: rgba(255,100,132,0.25);
-      border-color: #fb7185;
-    }
+    .clear-btn:hover { background: rgba(255,100,132,0.22); border-color: #fb7185; }
     .clear-btn.show { display: flex; }
 
-    /* Panel / fade */
-    .panel {
-      opacity: 0;
-      transform: translateY(8px);
-      transition: opacity 0.35s ease, transform 0.35s ease;
-      pointer-events: none;
-      position: absolute;
-      width: 100%;
-    }
-    .panel.active {
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: auto;
-      position: relative;
-    }
-    .panels-wrapper { position: relative; }
-
-    /* Table card */
+    /* ── Table card ── */
     .table-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       backdrop-filter: blur(12px);
       overflow: hidden;
+      transition: background 0.35s ease, box-shadow 0.35s ease;
     }
     .table-scroll { overflow-x: auto; }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.93rem;
-    }
-    thead tr {
-      background: rgba(108,99,255,0.15);
-    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+    thead tr { background: var(--thead-bg); }
     thead th {
-      padding: 14px 18px;
+      padding: 13px 18px;
       text-align: left;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1px;
-      color: #a78bfa;
+      color: var(--text-head);
       white-space: nowrap;
-      border-bottom: 1px solid var(--card-border);
+      border-bottom: 1px solid var(--surface-border);
     }
-    thead th:first-child { width: 90px; }
+    thead th:first-child { width: 88px; }
     tbody tr {
-      border-bottom: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid var(--row-border);
       transition: background 0.15s;
     }
     tbody tr:last-child { border-bottom: none; }
     tbody tr:hover { background: var(--row-hover); }
-    tbody td {
-      padding: 13px 18px;
-      vertical-align: middle;
-    }
+    tbody td { padding: 12px 18px; vertical-align: middle; }
     .ch-num {
       font-weight: 800;
       font-size: 1rem;
-      color: #a78bfa;
+      color: var(--ch-num-color);
       font-variant-numeric: tabular-nums;
     }
-    .ch-name {
-      font-weight: 500;
-      color: var(--text);
-    }
+    .ch-name { font-weight: 500; color: var(--text); }
     .lang-badge {
       display: inline-block;
       padding: 3px 10px;
       border-radius: 50px;
-      font-size: 0.75rem;
+      font-size: 0.73rem;
       font-weight: 600;
-      background: rgba(108,99,255,0.18);
-      color: #c4b5fd;
-      border: 1px solid rgba(108,99,255,0.25);
+      background: var(--badge-bg);
+      color: var(--badge-color);
+      border: 1px solid var(--badge-border);
       white-space: nowrap;
     }
 
-    /* Empty state */
+    /* ── Table fade animation ── */
+    .table-fade {
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Empty state ── */
     .empty-state {
       display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 64px 20px;
+      padding: 60px 20px;
       text-align: center;
-      gap: 16px;
+      gap: 14px;
     }
     .empty-state.show { display: flex; }
     .empty-icon {
-      width: 64px; height: 64px;
+      width: 60px; height: 60px;
       border-radius: 50%;
-      background: rgba(108,99,255,0.12);
+      background: rgba(108,99,255,0.1);
       display: flex; align-items: center; justify-content: center;
-      font-size: 2rem;
+      font-size: 1.8rem;
     }
-    .empty-state h3 {
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: var(--text);
-    }
-    .empty-state p {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-    }
+    .empty-state h3 { font-size: 1.15rem; font-weight: 700; color: var(--text); }
+    .empty-state p { color: var(--text-muted); font-size: 0.88rem; }
     .empty-clear-btn {
-      padding: 10px 24px;
-      background: rgba(108,99,255,0.2);
-      border: 1.5px solid rgba(108,99,255,0.4);
+      padding: 9px 22px;
+      background: rgba(108,99,255,0.15);
+      border: 1.5px solid rgba(108,99,255,0.35);
       border-radius: 50px;
-      color: #a78bfa;
-      font-size: 0.9rem;
+      color: var(--primary);
+      font-size: 0.88rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: var(--transition);
     }
-    .empty-clear-btn:hover {
-      background: rgba(108,99,255,0.35);
-      color: #fff;
-    }
+    .empty-clear-btn:hover { background: rgba(108,99,255,0.28); color: #fff; }
 
-    /* Footer */
+    /* ── Footer ── */
     footer {
       text-align: center;
-      padding: 32px 20px 8px;
-      color: var(--text-muted);
-      font-size: 0.85rem;
+      padding: 30px 20px 8px;
+      color: var(--footer-color);
+      font-size: 0.83rem;
     }
-    footer span { color: #a78bfa; font-weight: 600; }
+    footer span { color: var(--primary); font-weight: 600; }
 
-    /* Responsive */
+    /* ── Responsive ── */
     @media (max-width: 600px) {
       .filter-bar { gap: 8px; }
-      .lang-select { min-width: 120px; width: 100%; }
+      .lang-select { min-width: 130px; width: 100%; }
       .search-wrap { min-width: 100%; }
-      thead th, tbody td { padding: 11px 12px; }
-      .tab-btn { padding: 10px 22px; font-size: 0.9rem; }
+      thead th, tbody td { padding: 10px 12px; }
+      .tab-btn { padding: 9px 20px; font-size: 0.88rem; }
+      .dark-toggle { padding: 5px 9px; }
+      .toggle-label { display: none; }
     }
   </style>
 </head>
 <body>
 
+<!-- ── Header ── -->
 <div class="header">
-  <h1>TV Channel Guide</h1>
-  <p>Browse Free &amp; Paid channels — search, filter by language</p>
+  <div class="container">
+    <div class="header-inner">
+      <h1>TV Channel Guide</h1>
+      <div class="dark-toggle" id="darkToggle" onclick="toggleDark()" title="Toggle dark/light mode">
+        <span class="toggle-label" id="toggleLabel">☀ Light</span>
+        <div class="toggle-switch"></div>
+      </div>
+    </div>
+    <span class="header-bar"></span>
+    <p class="header-sub">Browse Free &amp; Paid channels — filter by category &amp; language</p>
+  </div>
 </div>
 
 <div class="container">
 
-  <!-- Tab buttons -->
+  <!-- ── Free / Paid tabs ── -->
   <div class="tab-bar">
-    <button class="tab-btn free active" onclick="switchTab('free')">
+    <button class="tab-btn free active" id="tabFree" onclick="switchTab('free')">
       <span class="dot"></span> Free Channels
     </button>
-    <button class="tab-btn paid" onclick="switchTab('paid')">
+    <button class="tab-btn paid" id="tabPaid" onclick="switchTab('paid')">
       <span class="dot"></span> Paid Channels
     </button>
   </div>
 
-  <!-- Filters -->
+  <!-- ── Category bar ── -->
+  <div class="cat-bar-wrap">
+    <div class="cat-bar" id="catBar">
+      <button class="cat-btn active" data-cat="All"        onclick="switchCat('All')">All</button>
+      <button class="cat-btn"        data-cat="Movies"     onclick="switchCat('Movies')">🎬 Movies</button>
+      <button class="cat-btn"        data-cat="News"       onclick="switchCat('News')">📰 News</button>
+      <button class="cat-btn"        data-cat="Sports"     onclick="switchCat('Sports')">⚽ Sports</button>
+      <button class="cat-btn"        data-cat="Kids"       onclick="switchCat('Kids')">🧒 Kids</button>
+      <button class="cat-btn"        data-cat="Devotional" onclick="switchCat('Devotional')">🙏 Devotional</button>
+      <button class="cat-btn"        data-cat="Music"      onclick="switchCat('Music')">🎵 Music</button>
+      <button class="cat-btn"        data-cat="Regional"   onclick="switchCat('Regional')">🌐 Regional</button>
+    </div>
+  </div>
+
+  <!-- ── Language + Search ── -->
   <div class="filter-bar">
     <div class="search-wrap">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -390,67 +531,37 @@
     </select>
   </div>
 
-  <!-- Result bar -->
+  <!-- ── Result bar ── -->
   <div class="result-bar">
     <div class="result-count" id="resultCount">Showing <span>0</span> channels</div>
     <button class="clear-btn" id="clearBtn" onclick="clearFilters()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       Clear Filters
     </button>
   </div>
 
-  <!-- Panels -->
-  <div class="panels-wrapper">
-
-    <!-- Free Panel -->
-    <div class="panel active" id="panel-free">
-      <div class="table-card">
-        <div class="table-scroll">
-          <table id="table-free">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Channel Name</th>
-                <th>Language</th>
-              </tr>
-            </thead>
-            <tbody id="tbody-free"></tbody>
-          </table>
-        </div>
-        <div class="empty-state" id="empty-free">
-          <div class="empty-icon">📺</div>
-          <h3>No channels found</h3>
-          <p>Try a different search term or language filter.</p>
-          <button class="empty-clear-btn" onclick="clearFilters()">Clear Filters</button>
-        </div>
-      </div>
+  <!-- ── Table ── -->
+  <div class="table-card" id="tableCard">
+    <div class="table-scroll">
+      <table id="mainTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Channel Name</th>
+            <th>Language</th>
+          </tr>
+        </thead>
+        <tbody id="mainTbody"></tbody>
+      </table>
     </div>
-
-    <!-- Paid Panel -->
-    <div class="panel" id="panel-paid">
-      <div class="table-card">
-        <div class="table-scroll">
-          <table id="table-paid">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Channel Name</th>
-                <th>Language</th>
-              </tr>
-            </thead>
-            <tbody id="tbody-paid"></tbody>
-          </table>
-        </div>
-        <div class="empty-state" id="empty-paid">
-          <div class="empty-icon">📺</div>
-          <h3>No channels found</h3>
-          <p>Try a different search term or language filter.</p>
-          <button class="empty-clear-btn" onclick="clearFilters()">Clear Filters</button>
-        </div>
-      </div>
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">📺</div>
+      <h3>No channels found</h3>
+      <p>Try a different search term, category, or language filter.</p>
+      <button class="empty-clear-btn" onclick="clearFilters()">Clear Filters</button>
     </div>
-
   </div>
+
 </div>
 
 <footer>
@@ -458,87 +569,113 @@
 </footer>
 
 <script>
+  /* ── State ── */
   let allChannels = [];
   let activeTab = 'free';
+  let activeCat = 'All';
 
-  async function loadData() {
-    const res = await fetch('channels.json');
-    allChannels = await res.json();
-    buildLanguageOptions();
-    applyFilters();
+  /* ── Category classifier ── */
+  function getCategory(ch) {
+    const name = (ch.name || '').toUpperCase();
+    const lang = (ch.language || '').toUpperCase();
+    const combined = name + ' ' + lang;
+
+    if (/MOVIE|CINEMA|GOLD|BOLLYWOOD|PICCHAR|PICTURE|CHITRA|CINE|FILM|BHOJPURI CINEMA|ZEE CINEMA|SONY MAX|STAR GOLD|COLORS CINEPLEX/.test(combined)) return 'Movies';
+    if (/NEWS|KHABAR|SAMACHAR|KHABRAIN|SEITHIKAL|THALAIMURAI|SAMAY|NDTV|TIMES NOW|REPUBLIC|CNN|ABP|AAJTAK|AAJ TAK|TV9|NEWS18|WION|INDIA TODAY|INDIA TV/.test(combined)) return 'News';
+    if (/SPORT/.test(combined)) return 'Sports';
+    if (/KIDS|CARTOON|POGO|NICK|HUNGAMA|SONIC|DISNEY JUNIOR|DISCOVERY KIDS|SONY YAY|CHINTU|BAL BHARAT|JUNIOR/.test(combined)) return 'Kids';
+    if (/BHAKTI|DEVOTION|SANSKAR|AASTHA|AASTIK|DIVYA|ISHWAR|SHUBH|SHRADHA|SATSANG|PRARTHANA|JINVANI|SAI TV|SVBC|ARADANA|ANGEL TV|MADHA TV|NAMBIKKAI|SHALOM|GOODNESS TV|HARVEST|CALVERY|SUBHARTI|AADINATH|SARV DHARAM|PEACE OF MIND|PARAS GOLD|DHARM|GOODNEWS TV|PYRAMID MEDITATION|DIVYAVANI|AASEERVATHAM/.test(combined)) return 'Devotional';
+    if (/MUSIC|MTV|VH1|ZING|BALLE BALLE|TASHAN|PTC MUSIC|9X MUSIC|B4U MUSIC|MAIBOLI|SANGEET|RAJ MUSIX|DHOOM MUSIC|7S MUSIC|PUBLIC MUSIC|9X JALWA|HITS/.test(combined)) return 'Music';
+    // Everything else → Regional
+    return 'Regional';
   }
 
-  function buildLanguageOptions() {
-    const select = document.getElementById('langSelect');
-    // Build unique languages per tab — we rebuild on tab switch
-    rebuildLangOptions();
+  /* ── Dark mode ── */
+  function toggleDark() {
+    const html = document.documentElement;
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    document.getElementById('toggleLabel').textContent = isDark ? '☀ Light' : '🌙 Dark';
+    localStorage.setItem('tvGuideTheme', isDark ? 'light' : 'dark');
   }
 
-  function rebuildLangOptions() {
-    const select = document.getElementById('langSelect');
-    const current = select.value;
-    const langs = [...new Set(
-      allChannels
-        .filter(c => c.type === capitalize(activeTab))
-        .map(c => c.language)
-    )].sort();
-    // clear except first
-    while (select.options.length > 1) select.remove(1);
-    langs.forEach(l => {
-      const o = document.createElement('option');
-      o.value = l;
-      o.textContent = l;
-      select.appendChild(o);
-    });
-    // restore if still valid
-    if (langs.includes(current)) select.value = current;
-    else select.value = '';
+  function initTheme() {
+    const saved = localStorage.getItem('tvGuideTheme') || 'light';
+    document.documentElement.setAttribute('data-theme', saved);
+    document.getElementById('toggleLabel').textContent = saved === 'dark' ? '🌙 Dark' : '☀ Light';
   }
 
-  function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
-
+  /* ── Tab switch ── */
   function switchTab(tab) {
     if (activeTab === tab) return;
-
-    // hide old
-    document.getElementById('panel-' + activeTab).classList.remove('active');
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-
     activeTab = tab;
+    activeCat = 'All';
 
-    // show new
-    document.getElementById('panel-' + tab).classList.add('active');
-    document.querySelector('.tab-btn.' + tab).classList.add('active');
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
 
-    // reset search & lang
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === 'All'));
+
     document.getElementById('searchInput').value = '';
     rebuildLangOptions();
     applyFilters();
   }
 
+  /* ── Category switch ── */
+  function switchCat(cat) {
+    if (activeCat === cat) return;
+    activeCat = cat;
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
+    rebuildLangOptions();
+    applyFilters();
+  }
+
+  /* ── Language options ── */
+  function rebuildLangOptions() {
+    const select = document.getElementById('langSelect');
+    const current = select.value;
+    const type = capitalize(activeTab);
+
+    const langs = [...new Set(
+      allChannels
+        .filter(c => c.type === type && (activeCat === 'All' || getCategory(c) === activeCat))
+        .map(c => c.language)
+    )].sort();
+
+    while (select.options.length > 1) select.remove(1);
+    langs.forEach(l => {
+      const o = document.createElement('option');
+      o.value = l; o.textContent = l;
+      select.appendChild(o);
+    });
+    select.value = langs.includes(current) ? current : '';
+  }
+
+  /* ── Filters ── */
   function applyFilters() {
     const query = document.getElementById('searchInput').value.trim().toLowerCase();
-    const lang = document.getElementById('langSelect').value;
-    const type = capitalize(activeTab);
+    const lang  = document.getElementById('langSelect').value;
+    const type  = capitalize(activeTab);
 
     const filtered = allChannels.filter(c => {
       if (c.type !== type) return false;
+      if (activeCat !== 'All' && getCategory(c) !== activeCat) return false;
       if (lang && c.language !== lang) return false;
       if (query) {
-        const numStr = String(c.number);
-        if (!c.name.toLowerCase().includes(query) && !numStr.includes(query)) return false;
+        if (!c.name.toLowerCase().includes(query) && !String(c.number).includes(query)) return false;
       }
       return true;
     });
 
-    renderTable(activeTab, filtered);
-    updateResultBar(filtered.length, query || lang);
+    renderTable(filtered);
+    updateResultBar(filtered.length, query || lang || activeCat !== 'All');
   }
 
-  function renderTable(tab, rows) {
-    const tbody = document.getElementById('tbody-' + tab);
-    const empty = document.getElementById('empty-' + tab);
-    const tbl = document.getElementById('table-' + tab);
+  /* ── Render ── */
+  function renderTable(rows) {
+    const tbody  = document.getElementById('mainTbody');
+    const empty  = document.getElementById('emptyState');
+    const tbl    = document.getElementById('mainTable');
 
     if (rows.length === 0) {
       tbody.innerHTML = '';
@@ -554,27 +691,44 @@
           <td><span class="lang-badge">${escHtml(c.language)}</span></td>
         </tr>
       `).join('');
+      tbody.classList.remove('table-fade');
+      void tbody.offsetWidth; // reflow
+      tbody.classList.add('table-fade');
     }
   }
 
+  /* ── Result bar ── */
   function updateResultBar(count, hasFilters) {
-    const el = document.getElementById('resultCount');
-    el.innerHTML = `Showing <span>${count}</span> channel${count !== 1 ? 's' : ''}`;
-    const clearBtn = document.getElementById('clearBtn');
-    if (hasFilters) clearBtn.classList.add('show');
-    else clearBtn.classList.remove('show');
+    document.getElementById('resultCount').innerHTML =
+      `Showing <span>${count}</span> channel${count !== 1 ? 's' : ''}`;
+    document.getElementById('clearBtn').classList.toggle('show', !!hasFilters);
   }
 
+  /* ── Clear ── */
   function clearFilters() {
     document.getElementById('searchInput').value = '';
     document.getElementById('langSelect').value = '';
+    activeCat = 'All';
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === 'All'));
+    rebuildLangOptions();
     applyFilters();
   }
 
+  /* ── Helpers ── */
+  function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
   function escHtml(s) {
     return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
+  /* ── Boot ── */
+  async function loadData() {
+    const res = await fetch('channels.json');
+    allChannels = await res.json();
+    rebuildLangOptions();
+    applyFilters();
+  }
+
+  initTheme();
   loadData();
 </script>
 </body>
