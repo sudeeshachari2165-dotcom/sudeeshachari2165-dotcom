@@ -4,145 +4,193 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TV Channel Guide</title>
+  <!-- SheetJS for Excel upload in Admin -->
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ── Theme tokens ── */
+    /* ── Design tokens ── */
     :root {
-      --primary: #6c63ff;
-      --primary-dark: #574fd6;
-      --accent: #ff6584;
-      --free-color: #22c55e;
-      --paid-color: #f59e0b;
-      --radius: 14px;
-      --transition: all 0.3s ease;
+      --green:        #1f6f3d;
+      --green-mid:    #27a25a;
+      --green-light:  #4ade80;
+      --gold:         #c8972a;
+      --gold-light:   #f0c060;
+      --radius:       16px;
+      --radius-sm:    50px;
+      --transition:   all 0.3s cubic-bezier(.4,0,.2,1);
+      --header-h:     68px;
     }
 
-    /* Light theme */
+    /* ── Light theme ── */
     [data-theme="light"] {
-      --bg: linear-gradient(135deg, #e8e0ff 0%, #f3e8ff 40%, #e0f0ff 100%);
-      --surface: rgba(255,255,255,0.75);
-      --surface-border: rgba(108,99,255,0.15);
-      --text: #1e1b4b;
-      --text-muted: #6b7280;
-      --text-head: #4c1d95;
-      --row-hover: rgba(108,99,255,0.07);
-      --input-bg: rgba(255,255,255,0.9);
-      --input-border: rgba(108,99,255,0.25);
-      --badge-bg: rgba(108,99,255,0.1);
-      --badge-color: #6c63ff;
-      --badge-border: rgba(108,99,255,0.25);
-      --thead-bg: rgba(108,99,255,0.08);
-      --row-border: rgba(0,0,0,0.05);
-      --shadow: 0 8px 32px rgba(108,99,255,0.12);
-      --cat-idle: rgba(108,99,255,0.1);
-      --cat-idle-text: #6c63ff;
-      --cat-idle-border: rgba(108,99,255,0.2);
-      --cat-active: linear-gradient(135deg, #6c63ff, #a78bfa);
+      --bg:              linear-gradient(145deg,#e8f5ee 0%,#eef4fb 40%,#f0e8ff 100%);
+      --glow:            radial-gradient(ellipse 70% 40% at 50% -10%,rgba(31,111,61,.18) 0%,transparent 70%);
+      --header-bg:       rgba(255,255,255,.72);
+      --header-border:   rgba(31,111,61,.18);
+      --surface:         rgba(255,255,255,.78);
+      --surface-border:  rgba(31,111,61,.15);
+      --text:            #0f2a1a;
+      --text-muted:      #5a7a68;
+      --text-head:       #1f6f3d;
+      --input-bg:        rgba(255,255,255,.92);
+      --input-border:    rgba(31,111,61,.22);
+      --row-hover:       rgba(31,111,61,.06);
+      --row-border:      rgba(0,0,0,.05);
+      --thead-bg:        rgba(31,111,61,.07);
+      --badge-bg:        rgba(31,111,61,.1);
+      --badge-color:     #1f6f3d;
+      --badge-border:    rgba(31,111,61,.22);
+      --cat-idle:        rgba(31,111,61,.08);
+      --cat-idle-text:   #1f6f3d;
+      --cat-idle-border: rgba(31,111,61,.2);
       --cat-active-text: #fff;
-      --footer-color: #9ca3af;
-      --toggle-bg: #e5e7eb;
-      --toggle-knob: #6c63ff;
-      --ch-num-color: #6c63ff;
-      --title-gradient: linear-gradient(135deg, #1e1b4b 30%, #6c63ff 100%);
-      --select-bg: rgba(255,255,255,0.95);
-      --select-color: #1e1b4b;
+      --footer-color:    #7a9a88;
+      --toggle-bg:       #d1e8db;
+      --toggle-knob:     #1f6f3d;
+      --ch-num-color:    #1f6f3d;
+      --shadow:          0 8px 32px rgba(31,111,61,.12);
+      --header-shadow:   0 2px 20px rgba(31,111,61,.12);
+      --title-color:     #0f2a1a;
+      --select-bg:       rgba(255,255,255,.96);
+      --select-color:    #0f2a1a;
+      --modal-bg:        rgba(0,0,0,.45);
+      --modal-surface:   #fff;
+      --modal-text:      #0f2a1a;
+      --modal-border:    rgba(31,111,61,.18);
     }
 
-    /* Dark theme */
+    /* ── Dark theme ── */
     [data-theme="dark"] {
-      --bg: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-      --surface: rgba(255,255,255,0.06);
-      --surface-border: rgba(255,255,255,0.10);
-      --text: #f1f5f9;
-      --text-muted: #94a3b8;
-      --text-head: #a78bfa;
-      --row-hover: rgba(108,99,255,0.12);
-      --input-bg: rgba(255,255,255,0.07);
-      --input-border: rgba(255,255,255,0.15);
-      --badge-bg: rgba(108,99,255,0.18);
-      --badge-color: #c4b5fd;
-      --badge-border: rgba(108,99,255,0.3);
-      --thead-bg: rgba(108,99,255,0.15);
-      --row-border: rgba(255,255,255,0.05);
-      --shadow: 0 8px 32px rgba(0,0,0,0.4);
-      --cat-idle: rgba(255,255,255,0.07);
-      --cat-idle-text: #c4b5fd;
-      --cat-idle-border: rgba(255,255,255,0.12);
-      --cat-active: linear-gradient(135deg, #6c63ff, #a78bfa);
+      --bg:              linear-gradient(145deg,#071810 0%,#0d2818 40%,#101820 100%);
+      --glow:            radial-gradient(ellipse 70% 40% at 50% -10%,rgba(31,111,61,.28) 0%,transparent 70%);
+      --header-bg:       rgba(10,30,18,.82);
+      --header-border:   rgba(31,111,61,.3);
+      --surface:         rgba(255,255,255,.05);
+      --surface-border:  rgba(255,255,255,.09);
+      --text:            #dff5eb;
+      --text-muted:      #7ab594;
+      --text-head:       #4ade80;
+      --input-bg:        rgba(255,255,255,.07);
+      --input-border:    rgba(255,255,255,.14);
+      --row-hover:       rgba(31,111,61,.14);
+      --row-border:      rgba(255,255,255,.05);
+      --thead-bg:        rgba(31,111,61,.18);
+      --badge-bg:        rgba(31,111,61,.22);
+      --badge-color:     #6bde9e;
+      --badge-border:    rgba(31,111,61,.38);
+      --cat-idle:        rgba(255,255,255,.06);
+      --cat-idle-text:   #6bde9e;
+      --cat-idle-border: rgba(255,255,255,.12);
       --cat-active-text: #fff;
-      --footer-color: #64748b;
-      --toggle-bg: #374151;
-      --toggle-knob: #a78bfa;
-      --ch-num-color: #a78bfa;
-      --title-gradient: linear-gradient(135deg, #fff 30%, #a78bfa 100%);
-      --select-bg: #1e1b4b;
-      --select-color: #f1f5f9;
+      --footer-color:    #4a7a58;
+      --toggle-bg:       #1a3a28;
+      --toggle-knob:     #4ade80;
+      --ch-num-color:    #4ade80;
+      --shadow:          0 8px 32px rgba(0,0,0,.45);
+      --header-shadow:   0 2px 24px rgba(0,0,0,.5);
+      --title-color:     #dff5eb;
+      --select-bg:       #0d2818;
+      --select-color:    #dff5eb;
+      --modal-bg:        rgba(0,0,0,.7);
+      --modal-surface:   #0e2218;
+      --modal-text:      #dff5eb;
+      --modal-border:    rgba(31,111,61,.35);
     }
 
+    /* ── Base ── */
     body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
       background: var(--bg);
       min-height: 100vh;
       color: var(--text);
-      padding: 0 0 60px;
-      transition: background 0.35s ease, color 0.35s ease;
+      padding-top: var(--header-h);
+      padding-bottom: 70px;
+      transition: background .4s ease, color .3s ease;
+      position: relative;
+    }
+    body::before {
+      content:'';
+      position:fixed;
+      inset:0;
+      background: var(--glow);
+      pointer-events:none;
+      z-index:0;
+      transition: background .4s ease;
     }
 
-    /* ── Header ── */
-    .header {
-      text-align: center;
-      padding: 40px 20px 24px;
-      position: relative;
-    }
-    .header-inner {
+    /* ── Sticky glassmorphism header ── */
+    .site-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--header-h);
+      background: var(--header-bg);
+      border-bottom: 1px solid var(--header-border);
+      backdrop-filter: blur(18px) saturate(1.4);
+      -webkit-backdrop-filter: blur(18px) saturate(1.4);
+      box-shadow: var(--header-shadow);
+      z-index: 100;
       display: flex;
       align-items: center;
-      justify-content: center;
-      position: relative;
+      padding: 0 20px;
+      transition: background .3s, box-shadow .3s, border-color .3s;
+      animation: hdrFadeIn .5s ease both;
     }
-    .header h1 {
-      font-size: clamp(1.7rem, 5vw, 2.7rem);
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      background: var(--title-gradient);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    @keyframes hdrFadeIn {
+      from { opacity:0; transform:translateY(-10px); }
+      to   { opacity:1; transform:translateY(0); }
     }
-    .header-bar {
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 0;
+    }
+    .logo-img {
+      height: 42px;
+      width: auto;
+      object-fit: contain;
+      flex-shrink: 0;
       display: block;
-      width: 80px;
-      height: 4px;
-      background: linear-gradient(90deg, var(--primary), var(--accent));
-      border-radius: 2px;
-      margin: 12px auto 0;
     }
-    .header-sub {
-      color: var(--text-muted);
-      margin-top: 6px;
-      font-size: 0.92rem;
+    /* fallback SVG logo if no image */
+    .logo-svg {
+      height: 42px;
+      width: 42px;
+      flex-shrink: 0;
     }
+    .brand-title {
+      font-size: clamp(1.05rem, 3.5vw, 1.5rem);
+      font-weight: 800;
+      color: var(--title-color);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: -.3px;
+      transition: color .3s;
+    }
+    .brand-title em {
+      font-style: normal;
+      color: var(--green);
+    }
+    [data-theme="dark"] .brand-title em { color: var(--green-light); }
 
-    /* ── Dark mode toggle ── */
+    /* ── Dark toggle ── */
     .dark-toggle {
-      position: absolute;
-      right: 0;
-      top: 50%;
-      transform: translateY(-50%);
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
       cursor: pointer;
       user-select: none;
-      padding: 6px 12px;
+      padding: 7px 14px;
       border-radius: 50px;
-      background: var(--surface);
-      border: 1px solid var(--surface-border);
+      background: var(--cat-idle);
+      border: 1.5px solid var(--cat-idle-border);
       transition: var(--transition);
-      backdrop-filter: blur(8px);
+      flex-shrink: 0;
     }
-    .dark-toggle:hover { box-shadow: 0 2px 12px rgba(108,99,255,0.2); }
+    .dark-toggle:hover { box-shadow: 0 3px 14px rgba(31,111,61,.2); transform: translateY(-1px); }
     .toggle-label {
       font-size: 0.78rem;
       font-weight: 600;
@@ -150,81 +198,107 @@
       white-space: nowrap;
     }
     .toggle-switch {
-      width: 38px;
-      height: 20px;
+      width: 36px;
+      height: 19px;
       background: var(--toggle-bg);
       border-radius: 50px;
       position: relative;
-      transition: background 0.3s;
+      transition: background .3s;
+      flex-shrink: 0;
     }
     .toggle-switch::after {
-      content: '';
+      content:'';
       position: absolute;
-      width: 14px;
-      height: 14px;
+      width: 13px; height: 13px;
       border-radius: 50%;
       background: var(--toggle-knob);
-      top: 3px;
-      left: 3px;
-      transition: transform 0.3s ease;
+      top: 3px; left: 3px;
+      transition: transform .3s ease;
     }
-    [data-theme="dark"] .toggle-switch::after {
-      transform: translateX(18px);
-    }
+    [data-theme="dark"] .toggle-switch::after { transform: translateX(17px); }
 
-    /* ── Container ── */
+    /* ── Page container ── */
     .container {
       max-width: 1100px;
       margin: 0 auto;
       padding: 0 16px;
+      position: relative;
+      z-index: 1;
     }
 
-    /* ── Tab buttons (Free/Paid) ── */
+    /* ── Page title block ── */
+    .page-title-block {
+      text-align: center;
+      padding: 32px 16px 20px;
+      animation: fadeUp .5s ease both;
+    }
+    .page-title-block h2 {
+      font-size: clamp(1.4rem,4vw,2.2rem);
+      font-weight: 800;
+      color: var(--title-color);
+      letter-spacing: -.4px;
+    }
+    .page-title-block h2 em { font-style: normal; color: var(--green); }
+    [data-theme="dark"] .page-title-block h2 em { color: var(--green-light); }
+    .title-bar {
+      width: 72px; height: 4px;
+      background: linear-gradient(90deg,var(--green),var(--green-light));
+      border-radius: 2px;
+      margin: 10px auto 6px;
+    }
+    .page-subtitle { color: var(--text-muted); font-size: .9rem; }
+
+    /* ── Free / Paid tab bar ── */
     .tab-bar {
       display: flex;
       gap: 12px;
       justify-content: center;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
       flex-wrap: wrap;
+      animation: fadeUp .5s .08s ease both;
     }
     .tab-btn {
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 11px 30px;
+      padding: 12px 32px;
       border: 2px solid transparent;
       border-radius: 50px;
-      font-size: 0.97rem;
+      font-size: .97rem;
       font-weight: 700;
       cursor: pointer;
       transition: var(--transition);
-      letter-spacing: 0.3px;
+      letter-spacing: .3px;
     }
-    .tab-btn .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+    .tab-btn .dot { width:8px;height:8px;border-radius:50%;background:currentColor; }
+
+    /* Free */
     .tab-btn.free {
-      background: rgba(34,197,94,0.12);
-      color: #16a34a;
-      border-color: rgba(34,197,94,0.3);
+      background: rgba(31,111,61,.1);
+      color: var(--green);
+      border-color: rgba(31,111,61,.25);
     }
-    [data-theme="dark"] .tab-btn.free { color: #4ade80; }
+    [data-theme="dark"] .tab-btn.free { color: var(--green-light); }
     .tab-btn.free.active, .tab-btn.free:hover {
-      background: linear-gradient(135deg, #16a34a, #22c55e);
+      background: linear-gradient(135deg,var(--green),var(--green-mid));
       color: #fff;
       border-color: transparent;
-      box-shadow: 0 4px 18px rgba(34,197,94,0.35);
+      box-shadow: 0 6px 22px rgba(31,111,61,.38);
       transform: translateY(-2px);
     }
+
+    /* Paid — gold-green gradient variation */
     .tab-btn.paid {
-      background: rgba(245,158,11,0.12);
-      color: #d97706;
-      border-color: rgba(245,158,11,0.3);
+      background: rgba(200,151,42,.1);
+      color: var(--gold);
+      border-color: rgba(200,151,42,.28);
     }
-    [data-theme="dark"] .tab-btn.paid { color: #fbbf24; }
+    [data-theme="dark"] .tab-btn.paid { color: var(--gold-light); }
     .tab-btn.paid.active, .tab-btn.paid:hover {
-      background: linear-gradient(135deg, #d97706, #f59e0b);
+      background: linear-gradient(135deg,var(--gold),#e8b84b,#80c270);
       color: #fff;
       border-color: transparent;
-      box-shadow: 0 4px 18px rgba(245,158,11,0.35);
+      box-shadow: 0 6px 22px rgba(200,151,42,.38);
       transform: translateY(-2px);
     }
 
@@ -235,8 +309,9 @@
       scrollbar-width: none;
       margin-bottom: 20px;
       padding-bottom: 4px;
+      animation: fadeUp .5s .14s ease both;
     }
-    .cat-bar-wrap::-webkit-scrollbar { display: none; }
+    .cat-bar-wrap::-webkit-scrollbar { display:none; }
     .cat-bar {
       display: flex;
       gap: 8px;
@@ -250,21 +325,18 @@
       border: 1.5px solid var(--cat-idle-border);
       background: var(--cat-idle);
       color: var(--cat-idle-text);
-      font-size: 0.85rem;
+      font-size: .85rem;
       font-weight: 600;
       cursor: pointer;
       transition: var(--transition);
       white-space: nowrap;
     }
-    .cat-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 3px 12px rgba(108,99,255,0.2);
-    }
+    .cat-btn:hover { transform:translateY(-1px); box-shadow:0 4px 14px rgba(31,111,61,.2); }
     .cat-btn.active {
-      background: var(--cat-active);
+      background: linear-gradient(135deg,var(--green),var(--green-mid));
       color: var(--cat-active-text);
       border-color: transparent;
-      box-shadow: 0 4px 16px rgba(108,99,255,0.3);
+      box-shadow: 0 4px 18px rgba(31,111,61,.32);
       transform: translateY(-1px);
     }
 
@@ -275,91 +347,113 @@
       margin-bottom: 14px;
       flex-wrap: wrap;
       align-items: center;
+      animation: fadeUp .5s .2s ease both;
     }
     .search-wrap {
-      flex: 1;
+      flex:1;
       min-width: 200px;
       position: relative;
     }
     .search-wrap svg {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-muted);
-      pointer-events: none;
+      position:absolute;
+      left:14px;
+      top:50%;
+      transform:translateY(-50%);
+      color:var(--text-muted);
+      pointer-events:none;
     }
     .search-input {
-      width: 100%;
+      width:100%;
       padding: 11px 14px 11px 42px;
       background: var(--input-bg);
       border: 1.5px solid var(--input-border);
       border-radius: 50px;
       color: var(--text);
-      font-size: 0.93rem;
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      font-size: .93rem;
+      outline:none;
+      transition: border-color .2s, box-shadow .2s;
       backdrop-filter: blur(6px);
     }
-    .search-input::placeholder { color: var(--text-muted); }
+    .search-input::placeholder { color:var(--text-muted); }
     .search-input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(108,99,255,0.18);
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(31,111,61,.18);
     }
     .lang-select {
-      padding: 11px 16px;
+      padding: 11px 36px 11px 16px;
       background: var(--select-bg);
       border: 1.5px solid var(--input-border);
       border-radius: 50px;
       color: var(--select-color);
-      font-size: 0.93rem;
-      outline: none;
-      cursor: pointer;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      font-size: .93rem;
+      outline:none;
+      cursor:pointer;
+      transition: border-color .2s, box-shadow .2s;
       min-width: 155px;
-      -webkit-appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236c63ff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 14px center;
-      padding-right: 36px;
+      -webkit-appearance:none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%231f6f3d' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat:no-repeat;
+      background-position:right 14px center;
     }
-    .lang-select option { background: var(--select-bg); color: var(--select-color); }
-    .lang-select:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(108,99,255,0.18);
-    }
+    .lang-select option { background:var(--select-bg);color:var(--select-color); }
+    .lang-select:focus { border-color:var(--green);box-shadow:0 0 0 3px rgba(31,111,61,.18); }
 
     /* ── Result bar ── */
     .result-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-      min-height: 26px;
-      flex-wrap: wrap;
-      gap: 8px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:12px;
+      min-height:28px;
+      flex-wrap:wrap;
+      gap:8px;
+      animation: fadeUp .5s .24s ease both;
     }
-    .result-count {
-      font-size: 0.87rem;
-      color: var(--text-muted);
-    }
-    .result-count span { color: var(--text); font-weight: 700; }
-    .clear-btn {
-      display: none;
+    .result-badge {
+      display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 5px 14px;
-      background: rgba(255,100,132,0.12);
-      border: 1.5px solid rgba(255,100,132,0.3);
+      padding: 4px 14px;
+      background: linear-gradient(135deg,var(--green),var(--green-mid));
       border-radius: 50px;
-      color: #fb7185;
-      font-size: 0.83rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: var(--transition);
+      color: #fff;
+      font-size: .82rem;
+      font-weight: 700;
+      box-shadow: 0 2px 10px rgba(31,111,61,.3);
     }
-    .clear-btn:hover { background: rgba(255,100,132,0.22); border-color: #fb7185; }
-    .clear-btn.show { display: flex; }
+    .clear-btn {
+      display:none;
+      align-items:center;
+      gap:6px;
+      padding: 5px 14px;
+      background:rgba(220,38,38,.1);
+      border:1.5px solid rgba(220,38,38,.28);
+      border-radius:50px;
+      color:#ef4444;
+      font-size:.83rem;
+      font-weight:600;
+      cursor:pointer;
+      transition:var(--transition);
+    }
+    .clear-btn:hover { background:rgba(220,38,38,.2); }
+    .clear-btn.show { display:flex; }
+
+    /* ── Loading spinner ── */
+    .spinner-wrap {
+      display:none;
+      justify-content:center;
+      align-items:center;
+      padding:40px;
+    }
+    .spinner-wrap.show { display:flex; }
+    .spinner {
+      width:36px;height:36px;
+      border:3px solid var(--cat-idle-border);
+      border-top-color: var(--green);
+      border-radius:50%;
+      animation:spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform:rotate(360deg); } }
 
     /* ── Table card ── */
     .table-card {
@@ -367,134 +461,377 @@
       border: 1px solid var(--surface-border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      backdrop-filter: blur(12px);
-      overflow: hidden;
-      transition: background 0.35s ease, box-shadow 0.35s ease;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      overflow:hidden;
+      transition: background .35s, box-shadow .35s;
+      animation: fadeUp .5s .28s ease both;
     }
-    .table-scroll { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
-    thead tr { background: var(--thead-bg); }
+    .table-scroll { overflow-x:auto; }
+    table { width:100%;border-collapse:collapse;font-size:.92rem; }
+    thead tr { background:var(--thead-bg); }
     thead th {
-      padding: 13px 18px;
-      text-align: left;
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--text-head);
-      white-space: nowrap;
-      border-bottom: 1px solid var(--surface-border);
+      padding:13px 18px;
+      text-align:left;
+      font-size:.73rem;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      color:var(--text-head);
+      white-space:nowrap;
+      border-bottom:1px solid var(--surface-border);
     }
-    thead th:first-child { width: 88px; }
+    thead th:first-child { width:90px; }
     tbody tr {
-      border-bottom: 1px solid var(--row-border);
-      transition: background 0.15s;
+      border-bottom:1px solid var(--row-border);
+      transition:background .15s;
     }
-    tbody tr:last-child { border-bottom: none; }
-    tbody tr:hover { background: var(--row-hover); }
-    tbody td { padding: 12px 18px; vertical-align: middle; }
-    .ch-num {
-      font-weight: 800;
-      font-size: 1rem;
-      color: var(--ch-num-color);
-      font-variant-numeric: tabular-nums;
+    tbody tr:nth-child(even) { background:rgba(31,111,61,.025); }
+    [data-theme="dark"] tbody tr:nth-child(even) { background:rgba(255,255,255,.025); }
+    tbody tr:last-child { border-bottom:none; }
+    tbody tr:hover { background:var(--row-hover) !important; }
+    tbody td { padding:12px 18px;vertical-align:middle; }
+
+    .ch-num-badge {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:46px;
+      padding:3px 8px;
+      background:linear-gradient(135deg,var(--green),var(--green-mid));
+      color:#fff;
+      border-radius:8px;
+      font-weight:800;
+      font-size:.88rem;
+      font-variant-numeric:tabular-nums;
+      box-shadow:0 2px 6px rgba(31,111,61,.3);
     }
-    .ch-name { font-weight: 500; color: var(--text); }
-    .lang-badge {
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: 50px;
-      font-size: 0.73rem;
-      font-weight: 600;
-      background: var(--badge-bg);
-      color: var(--badge-color);
-      border: 1px solid var(--badge-border);
-      white-space: nowrap;
+    .ch-name { font-weight:500;color:var(--text); }
+    .lang-tag {
+      display:inline-block;
+      padding:3px 10px;
+      border-radius:50px;
+      font-size:.72rem;
+      font-weight:600;
+      background:var(--badge-bg);
+      color:var(--badge-color);
+      border:1px solid var(--badge-border);
+      white-space:nowrap;
     }
 
-    /* ── Table fade animation ── */
-    .table-fade {
-      animation: fadeIn 0.3s ease;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    /* ── Table fade ── */
+    .table-fade { animation:fadeIn .3s ease both; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeUp  { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
 
     /* ── Empty state ── */
     .empty-state {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 60px 20px;
-      text-align: center;
-      gap: 14px;
+      display:none;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      padding:60px 20px;
+      text-align:center;
+      gap:14px;
     }
-    .empty-state.show { display: flex; }
+    .empty-state.show { display:flex; }
     .empty-icon {
-      width: 60px; height: 60px;
-      border-radius: 50%;
-      background: rgba(108,99,255,0.1);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.8rem;
+      width:62px;height:62px;border-radius:50%;
+      background:rgba(31,111,61,.1);
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.8rem;
     }
-    .empty-state h3 { font-size: 1.15rem; font-weight: 700; color: var(--text); }
-    .empty-state p { color: var(--text-muted); font-size: 0.88rem; }
+    .empty-state h3 { font-size:1.1rem;font-weight:700;color:var(--text); }
+    .empty-state p  { color:var(--text-muted);font-size:.87rem; }
     .empty-clear-btn {
-      padding: 9px 22px;
-      background: rgba(108,99,255,0.15);
-      border: 1.5px solid rgba(108,99,255,0.35);
-      border-radius: 50px;
-      color: var(--primary);
-      font-size: 0.88rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: var(--transition);
+      padding:9px 22px;
+      background:rgba(31,111,61,.12);
+      border:1.5px solid rgba(31,111,61,.3);
+      border-radius:50px;
+      color:var(--green);
+      font-size:.88rem;font-weight:600;cursor:pointer;
+      transition:var(--transition);
     }
-    .empty-clear-btn:hover { background: rgba(108,99,255,0.28); color: #fff; }
+    [data-theme="dark"] .empty-clear-btn { color:var(--green-light); }
+    .empty-clear-btn:hover { background:rgba(31,111,61,.24); color:#fff; }
 
     /* ── Footer ── */
     footer {
-      text-align: center;
-      padding: 30px 20px 8px;
-      color: var(--footer-color);
-      font-size: 0.83rem;
+      text-align:center;
+      padding:28px 20px 12px;
+      color:var(--footer-color);
+      font-size:.82rem;
+      position:relative;
+      z-index:1;
     }
-    footer span { color: var(--primary); font-weight: 600; }
+    .footer-logo { height:28px;width:auto;object-fit:contain;display:inline-block;margin-bottom:6px;opacity:.75; }
+    .footer-logo-svg { height:28px;width:28px;display:inline-block;margin-bottom:6px;opacity:.7; }
+    .admin-link {
+      margin-left:10px;
+      color:var(--text-muted);
+      font-size:.75rem;
+      cursor:pointer;
+      text-decoration:underline;
+      opacity:.55;
+      transition:opacity .2s;
+    }
+    .admin-link:hover { opacity:1; }
+
+    /* ── MODAL base ── */
+    .modal-overlay {
+      display:none;
+      position:fixed;inset:0;
+      background:var(--modal-bg);
+      z-index:200;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+      backdrop-filter:blur(6px);
+      animation:overlayIn .2s ease both;
+    }
+    .modal-overlay.open { display:flex; }
+    @keyframes overlayIn { from{opacity:0} to{opacity:1} }
+
+    .modal {
+      background:var(--modal-surface);
+      border:1px solid var(--modal-border);
+      border-radius:var(--radius);
+      box-shadow:0 24px 60px rgba(0,0,0,.3);
+      width:100%;
+      max-width:500px;
+      max-height:90vh;
+      overflow-y:auto;
+      padding:32px 28px 28px;
+      position:relative;
+      animation:modalIn .25s cubic-bezier(.4,0,.2,1) both;
+      transition:background .3s,border-color .3s;
+    }
+    @keyframes modalIn { from{opacity:0;transform:translateY(24px) scale(.97)} to{opacity:1;transform:none} }
+
+    .modal-close {
+      position:absolute;top:16px;right:16px;
+      width:30px;height:30px;
+      border-radius:50%;
+      background:var(--cat-idle);
+      border:1px solid var(--cat-idle-border);
+      cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      transition:var(--transition);
+      font-size:1rem;color:var(--text-muted);
+    }
+    .modal-close:hover { background:rgba(220,38,38,.15);color:#ef4444; }
+
+    .modal h2 {
+      font-size:1.25rem;font-weight:800;
+      color:var(--modal-text);margin-bottom:4px;
+    }
+    .modal .modal-sub { color:var(--text-muted);font-size:.87rem;margin-bottom:22px; }
+
+    /* ── Admin login form ── */
+    .admin-form label {
+      display:block;
+      font-size:.82rem;font-weight:600;
+      color:var(--text-muted);margin-bottom:5px;
+    }
+    .admin-form input[type="password"] {
+      width:100%;
+      padding:11px 16px;
+      background:var(--input-bg);
+      border:1.5px solid var(--input-border);
+      border-radius:12px;
+      color:var(--modal-text);
+      font-size:.95rem;
+      outline:none;
+      transition:border-color .2s,box-shadow .2s;
+      margin-bottom:14px;
+    }
+    .admin-form input[type="password"]:focus {
+      border-color:var(--green);
+      box-shadow:0 0 0 3px rgba(31,111,61,.18);
+    }
+    .admin-form-err {
+      font-size:.82rem;color:#ef4444;
+      margin-bottom:10px;min-height:18px;
+    }
+    .btn-primary {
+      width:100%;
+      padding:12px;
+      background:linear-gradient(135deg,var(--green),var(--green-mid));
+      color:#fff;
+      border:none;border-radius:12px;
+      font-size:.95rem;font-weight:700;
+      cursor:pointer;
+      transition:var(--transition);
+      box-shadow:0 4px 16px rgba(31,111,61,.3);
+    }
+    .btn-primary:hover { transform:translateY(-1px);box-shadow:0 6px 20px rgba(31,111,61,.4); }
+
+    /* ── Admin dashboard ── */
+    .admin-dash { display:none; }
+    .admin-dash.show { display:block; }
+
+    .admin-section {
+      background:var(--cat-idle);
+      border:1px solid var(--cat-idle-border);
+      border-radius:12px;
+      padding:20px;
+      margin-bottom:16px;
+    }
+    .admin-section h3 {
+      font-size:.95rem;font-weight:700;color:var(--modal-text);margin-bottom:12px;
+    }
+    .upload-zone {
+      border:2px dashed var(--cat-idle-border);
+      border-radius:12px;
+      padding:28px 16px;
+      text-align:center;
+      cursor:pointer;
+      transition:var(--transition);
+      position:relative;
+    }
+    .upload-zone:hover,
+    .upload-zone.drag-over {
+      border-color:var(--green);
+      background:rgba(31,111,61,.06);
+    }
+    .upload-zone input[type="file"] {
+      position:absolute;inset:0;opacity:0;cursor:pointer;
+    }
+    .upload-zone p { color:var(--text-muted);font-size:.85rem;margin-top:8px; }
+    .upload-zone strong { color:var(--modal-text);font-size:.95rem; }
+
+    .upload-msg {
+      margin-top:10px;font-size:.83rem;min-height:18px;font-weight:600;
+    }
+    .upload-msg.ok  { color:var(--green); }
+    [data-theme="dark"] .upload-msg.ok { color:var(--green-light); }
+    .upload-msg.err { color:#ef4444; }
+
+    /* preview table */
+    .preview-wrap {
+      display:none;
+      margin-top:14px;
+    }
+    .preview-wrap.show { display:block; }
+    .preview-scroll { overflow-x:auto;max-height:220px;overflow-y:auto; }
+    .preview-tbl { width:100%;border-collapse:collapse;font-size:.8rem; }
+    .preview-tbl th,.preview-tbl td { padding:7px 10px;border:1px solid var(--surface-border);text-align:left; }
+    .preview-tbl th { background:var(--thead-bg);color:var(--text-head);font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.8px; }
+    .preview-tbl td { color:var(--modal-text); }
+    .preview-count { font-size:.8rem;color:var(--text-muted);margin-bottom:6px; }
+
+    .admin-btn-row { display:flex;gap:10px;flex-wrap:wrap;margin-top:6px; }
+    .btn-save {
+      flex:1;
+      padding:10px 18px;
+      background:linear-gradient(135deg,var(--green),var(--green-mid));
+      color:#fff;border:none;border-radius:10px;
+      font-size:.88rem;font-weight:700;cursor:pointer;
+      transition:var(--transition);
+      box-shadow:0 3px 12px rgba(31,111,61,.28);
+    }
+    .btn-save:hover { transform:translateY(-1px); }
+    .btn-save:disabled { opacity:.45;cursor:not-allowed;transform:none; }
+    .btn-reset {
+      flex:1;
+      padding:10px 18px;
+      background:rgba(220,38,38,.1);
+      color:#ef4444;
+      border:1.5px solid rgba(220,38,38,.28);
+      border-radius:10px;
+      font-size:.88rem;font-weight:700;cursor:pointer;
+      transition:var(--transition);
+    }
+    .btn-reset:hover { background:rgba(220,38,38,.2); }
+    .btn-logout {
+      width:100%;
+      padding:10px;
+      background:transparent;
+      color:var(--text-muted);
+      border:1.5px solid var(--cat-idle-border);
+      border-radius:10px;
+      font-size:.87rem;font-weight:600;cursor:pointer;
+      transition:var(--transition);
+      margin-top:4px;
+    }
+    .btn-logout:hover { border-color:var(--green);color:var(--green); }
+    [data-theme="dark"] .btn-logout:hover { color:var(--green-light); }
+
+    /* current data info */
+    .data-info {
+      display:flex;align-items:center;gap:8px;
+      font-size:.83rem;color:var(--text-muted);
+      padding:8px 12px;
+      background:var(--thead-bg);
+      border-radius:8px;
+      margin-bottom:10px;
+    }
+    .data-dot {
+      width:8px;height:8px;border-radius:50%;
+      background:var(--green);flex-shrink:0;
+    }
+    [data-theme="dark"] .data-dot { background:var(--green-light); }
 
     /* ── Responsive ── */
-    @media (max-width: 600px) {
-      .filter-bar { gap: 8px; }
-      .lang-select { min-width: 130px; width: 100%; }
-      .search-wrap { min-width: 100%; }
-      thead th, tbody td { padding: 10px 12px; }
-      .tab-btn { padding: 9px 20px; font-size: 0.88rem; }
-      .dark-toggle { padding: 5px 9px; }
-      .toggle-label { display: none; }
+    @media (max-width:600px) {
+      .logo-img,.logo-svg { height:36px; }
+      .filter-bar { gap:8px; }
+      .lang-select { min-width:130px;width:100%; }
+      .search-wrap { min-width:100%; }
+      thead th,tbody td { padding:10px 12px; }
+      .tab-btn { padding:10px 22px;font-size:.88rem; }
+      .dark-toggle { padding:5px 10px; }
+      .toggle-label { display:none; }
+      .modal { padding:24px 18px 20px; }
     }
   </style>
 </head>
 <body>
 
-<!-- ── Header ── -->
-<div class="header">
-  <div class="container">
-    <div class="header-inner">
-      <h1>TV Channel Guide</h1>
-      <div class="dark-toggle" id="darkToggle" onclick="toggleDark()" title="Toggle dark/light mode">
-        <span class="toggle-label" id="toggleLabel">☀ Light</span>
-        <div class="toggle-switch"></div>
-      </div>
-    </div>
-    <span class="header-bar"></span>
-    <p class="header-sub">Browse Free &amp; Paid channels — filter by category &amp; language</p>
+<!-- ══════════════════════════════════════════
+     STICKY GLASSMORPHISM HEADER
+══════════════════════════════════════════ -->
+<header class="site-header">
+  <div class="header-brand">
+    <!-- Inline SVG logo (replace src with logo.png once uploaded) -->
+    <svg class="logo-svg" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="42" height="42" rx="10" fill="url(#lg)" />
+      <rect x="9" y="12" width="24" height="16" rx="3" fill="white" opacity=".92"/>
+      <rect x="11" y="14" width="20" height="12" rx="2" fill="url(#lg2)"/>
+      <rect x="17" y="29" width="8" height="3" rx="1.5" fill="white" opacity=".7"/>
+      <rect x="14" y="32" width="14" height="2" rx="1" fill="white" opacity=".5"/>
+      <defs>
+        <linearGradient id="lg" x1="0" y1="0" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#1f6f3d"/>
+          <stop offset="1" stop-color="#27a25a"/>
+        </linearGradient>
+        <linearGradient id="lg2" x1="11" y1="14" x2="31" y2="26" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#0f2a1a"/>
+          <stop offset="1" stop-color="#1f6f3d"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    <span class="brand-title"><em>TV</em> Channel Guide</span>
   </div>
-</div>
+  <div class="dark-toggle" id="darkToggle" onclick="toggleDark()" title="Toggle dark/light mode">
+    <span class="toggle-label" id="toggleLabel">&#9728; Light</span>
+    <div class="toggle-switch"></div>
+  </div>
+</header>
 
+<!-- ══════════════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════════════ -->
 <div class="container">
 
-  <!-- ── Free / Paid tabs ── -->
+  <!-- Page title -->
+  <div class="page-title-block">
+    <h2><em>TV</em> Channel Guide</h2>
+    <div class="title-bar"></div>
+    <p class="page-subtitle">Browse Free &amp; Paid channels &mdash; filter by category &amp; language</p>
+  </div>
+
+  <!-- Free / Paid tabs -->
   <div class="tab-bar">
     <button class="tab-btn free active" id="tabFree" onclick="switchTab('free')">
       <span class="dot"></span> Free Channels
@@ -504,21 +841,21 @@
     </button>
   </div>
 
-  <!-- ── Category bar ── -->
+  <!-- Category bar -->
   <div class="cat-bar-wrap">
     <div class="cat-bar" id="catBar">
       <button class="cat-btn active" data-cat="All"        onclick="switchCat('All')">All</button>
-      <button class="cat-btn"        data-cat="Movies"     onclick="switchCat('Movies')">🎬 Movies</button>
-      <button class="cat-btn"        data-cat="News"       onclick="switchCat('News')">📰 News</button>
-      <button class="cat-btn"        data-cat="Sports"     onclick="switchCat('Sports')">⚽ Sports</button>
-      <button class="cat-btn"        data-cat="Kids"       onclick="switchCat('Kids')">🧒 Kids</button>
-      <button class="cat-btn"        data-cat="Devotional" onclick="switchCat('Devotional')">🙏 Devotional</button>
-      <button class="cat-btn"        data-cat="Music"      onclick="switchCat('Music')">🎵 Music</button>
-      <button class="cat-btn"        data-cat="Regional"   onclick="switchCat('Regional')">🌐 Regional</button>
+      <button class="cat-btn"        data-cat="Movies"     onclick="switchCat('Movies')">&#127909; Movies</button>
+      <button class="cat-btn"        data-cat="News"       onclick="switchCat('News')">&#128240; News</button>
+      <button class="cat-btn"        data-cat="Sports"     onclick="switchCat('Sports')">&#9917; Sports</button>
+      <button class="cat-btn"        data-cat="Kids"       onclick="switchCat('Kids')">&#129306; Kids</button>
+      <button class="cat-btn"        data-cat="Devotional" onclick="switchCat('Devotional')">&#128591; Devotional</button>
+      <button class="cat-btn"        data-cat="Music"      onclick="switchCat('Music')">&#127925; Music</button>
+      <button class="cat-btn"        data-cat="Regional"   onclick="switchCat('Regional')">&#127758; Regional</button>
     </div>
   </div>
 
-  <!-- ── Language + Search ── -->
+  <!-- Language + Search -->
   <div class="filter-bar">
     <div class="search-wrap">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -531,22 +868,30 @@
     </select>
   </div>
 
-  <!-- ── Result bar ── -->
+  <!-- Result bar -->
   <div class="result-bar">
-    <div class="result-count" id="resultCount">Showing <span>0</span> channels</div>
+    <div class="result-badge" id="resultBadge">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span id="resultCount">0 channels</span>
+    </div>
     <button class="clear-btn" id="clearBtn" onclick="clearFilters()">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       Clear Filters
     </button>
   </div>
 
-  <!-- ── Table ── -->
+  <!-- Table card -->
   <div class="table-card" id="tableCard">
-    <div class="table-scroll">
+    <!-- Spinner -->
+    <div class="spinner-wrap" id="spinnerWrap">
+      <div class="spinner"></div>
+    </div>
+
+    <div class="table-scroll" id="tableScroll">
       <table id="mainTable">
         <thead>
           <tr>
-            <th>#</th>
+            <th>No.</th>
             <th>Channel Name</th>
             <th>Language</th>
           </tr>
@@ -554,182 +899,532 @@
         <tbody id="mainTbody"></tbody>
       </table>
     </div>
+
     <div class="empty-state" id="emptyState">
-      <div class="empty-icon">📺</div>
+      <div class="empty-icon">&#128250;</div>
       <h3>No channels found</h3>
       <p>Try a different search term, category, or language filter.</p>
       <button class="empty-clear-btn" onclick="clearFilters()">Clear Filters</button>
     </div>
   </div>
 
-</div>
+</div><!-- /container -->
 
+<!-- ══════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════ -->
 <footer>
-  &copy; 2026 <span>TV Channel Guide</span>
+  <!-- Small footer logo -->
+  <div>
+    <svg class="footer-logo-svg" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="42" height="42" rx="10" fill="url(#flg)"/>
+      <rect x="9" y="12" width="24" height="16" rx="3" fill="white" opacity=".9"/>
+      <rect x="11" y="14" width="20" height="12" rx="2" fill="url(#flg2)"/>
+      <rect x="17" y="29" width="8" height="3" rx="1.5" fill="white" opacity=".7"/>
+      <rect x="14" y="32" width="14" height="2" rx="1" fill="white" opacity=".5"/>
+      <defs>
+        <linearGradient id="flg" x1="0" y1="0" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#1f6f3d"/><stop offset="1" stop-color="#27a25a"/>
+        </linearGradient>
+        <linearGradient id="flg2" x1="11" y1="14" x2="31" y2="26" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#0f2a1a"/><stop offset="1" stop-color="#1f6f3d"/>
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
+  &copy; 2026 TV Channel Guide
+  <span class="admin-link" id="adminLink" onclick="openAdmin()">Admin</span>
 </footer>
 
+<!-- ══════════════════════════════════════════
+     ADMIN LOGIN MODAL
+══════════════════════════════════════════ -->
+<div class="modal-overlay" id="adminLoginModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeAdmin()" title="Close">&#10005;</button>
+    <h2>&#128274; Admin Login</h2>
+    <p class="modal-sub">Enter your admin password to continue.</p>
+    <div class="admin-form">
+      <label for="adminPass">Password</label>
+      <input type="password" id="adminPass" placeholder="Enter password…"
+             onkeydown="if(event.key==='Enter')doLogin()" />
+      <div class="admin-form-err" id="loginErr"></div>
+      <button class="btn-primary" onclick="doLogin()">Login</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ADMIN DASHBOARD MODAL
+══════════════════════════════════════════ -->
+<div class="modal-overlay" id="adminDashModal">
+  <div class="modal" style="max-width:600px;">
+    <button class="modal-close" onclick="closeDash()" title="Close">&#10005;</button>
+    <h2>&#9881;&#65039; Admin Dashboard</h2>
+    <p class="modal-sub">Manage channel data.</p>
+
+    <div class="admin-dash show" id="adminDash">
+
+      <!-- Current data info -->
+      <div class="data-info" id="dataInfo">
+        <div class="data-dot"></div>
+        <span id="dataInfoText">Loading…</span>
+      </div>
+
+      <!-- Upload section -->
+      <div class="admin-section">
+        <h3>&#128196; Upload Channel Data (Excel / CSV)</h3>
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" onchange="handleFile(this.files[0])" />
+          <div>&#128190;</div>
+          <strong>Click to browse or drag &amp; drop</strong>
+          <p>Accepts .xlsx, .xls, .csv &mdash; Required columns: <code>number, name, language, type</code></p>
+        </div>
+        <div class="upload-msg" id="uploadMsg"></div>
+
+        <!-- Preview -->
+        <div class="preview-wrap" id="previewWrap">
+          <div class="preview-count" id="previewCount"></div>
+          <div class="preview-scroll">
+            <table class="preview-tbl" id="previewTbl">
+              <thead>
+                <tr><th>#</th><th>Name</th><th>Language</th><th>Type</th></tr>
+              </thead>
+              <tbody id="previewTbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="admin-btn-row" style="margin-top:14px;">
+          <button class="btn-save" id="btnSave" onclick="saveData()" disabled>
+            &#128190; Save &amp; Apply
+          </button>
+          <button class="btn-reset" onclick="resetData()">
+            &#8635; Reset to Default
+          </button>
+        </div>
+      </div>
+
+      <!-- Logout -->
+      <button class="btn-logout" onclick="doLogout()">&#128275; Logout</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════ -->
 <script>
-  /* ── State ── */
-  let allChannels = [];
-  let activeTab = 'free';
-  let activeCat = 'All';
+/* ─────────────────────────────────────
+   STATE
+───────────────────────────────────── */
+let allChannels = [];      // active channel list
+let defaultChannels = [];  // from channels.json
+let parsedUpload = [];     // staged from excel upload
+let activeTab = 'free';
+let activeCat = 'All';
+const LS_KEY = 'tvGuideChannels';
+const ADMIN_PW = 'admin123';
 
-  /* ── Category classifier ── */
-  function getCategory(ch) {
-    const name = (ch.name || '').toUpperCase();
-    const lang = (ch.language || '').toUpperCase();
-    const combined = name + ' ' + lang;
+/* ─────────────────────────────────────
+   THEME
+───────────────────────────────────── */
+function toggleDark() {
+  const html = document.documentElement;
+  const dark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', dark ? 'light' : 'dark');
+  document.getElementById('toggleLabel').textContent = dark ? '\u2600 Light' : '\uD83C\uDF19 Dark';
+  localStorage.setItem('tvGuideTheme', dark ? 'light' : 'dark');
+}
+function initTheme() {
+  const s = localStorage.getItem('tvGuideTheme') || 'light';
+  document.documentElement.setAttribute('data-theme', s);
+  document.getElementById('toggleLabel').textContent = s === 'dark' ? '\uD83C\uDF19 Dark' : '\u2600 Light';
+}
 
-    if (/MOVIE|CINEMA|GOLD|BOLLYWOOD|PICCHAR|PICTURE|CHITRA|CINE|FILM|BHOJPURI CINEMA|ZEE CINEMA|SONY MAX|STAR GOLD|COLORS CINEPLEX/.test(combined)) return 'Movies';
-    if (/NEWS|KHABAR|SAMACHAR|KHABRAIN|SEITHIKAL|THALAIMURAI|SAMAY|NDTV|TIMES NOW|REPUBLIC|CNN|ABP|AAJTAK|AAJ TAK|TV9|NEWS18|WION|INDIA TODAY|INDIA TV/.test(combined)) return 'News';
-    if (/SPORT/.test(combined)) return 'Sports';
-    if (/KIDS|CARTOON|POGO|NICK|HUNGAMA|SONIC|DISNEY JUNIOR|DISCOVERY KIDS|SONY YAY|CHINTU|BAL BHARAT|JUNIOR/.test(combined)) return 'Kids';
-    if (/BHAKTI|DEVOTION|SANSKAR|AASTHA|AASTIK|DIVYA|ISHWAR|SHUBH|SHRADHA|SATSANG|PRARTHANA|JINVANI|SAI TV|SVBC|ARADANA|ANGEL TV|MADHA TV|NAMBIKKAI|SHALOM|GOODNESS TV|HARVEST|CALVERY|SUBHARTI|AADINATH|SARV DHARAM|PEACE OF MIND|PARAS GOLD|DHARM|GOODNEWS TV|PYRAMID MEDITATION|DIVYAVANI|AASEERVATHAM/.test(combined)) return 'Devotional';
-    if (/MUSIC|MTV|VH1|ZING|BALLE BALLE|TASHAN|PTC MUSIC|9X MUSIC|B4U MUSIC|MAIBOLI|SANGEET|RAJ MUSIX|DHOOM MUSIC|7S MUSIC|PUBLIC MUSIC|9X JALWA|HITS/.test(combined)) return 'Music';
-    // Everything else → Regional
-    return 'Regional';
-  }
+/* ─────────────────────────────────────
+   CATEGORY CLASSIFIER
+───────────────────────────────────── */
+function getCategory(ch) {
+  const c = ((ch.name || '') + ' ' + (ch.language || '')).toUpperCase();
+  if (/MOVIE|CINEMA|GOLD|BOLLYWOOD|PICCHAR|PICTURE|CHITRA|CINE|FILM|BHOJPURI CINEMA|ZEE CINEMA|SONY MAX|STAR GOLD|COLORS CINEPLEX/.test(c)) return 'Movies';
+  if (/NEWS|KHABAR|SAMACHAR|KHABRAIN|SEITHIKAL|THALAIMURAI|SAMAY|NDTV|TIMES NOW|REPUBLIC|CNN|ABP|AAJTAK|AAJ TAK|TV9|NEWS18|WION|INDIA TODAY|INDIA TV/.test(c)) return 'News';
+  if (/SPORT/.test(c)) return 'Sports';
+  if (/KIDS|CARTOON|POGO|NICK|HUNGAMA|SONIC|DISNEY JUNIOR|DISCOVERY KIDS|SONY YAY|CHINTU|BAL BHARAT|JUNIOR/.test(c)) return 'Kids';
+  if (/BHAKTI|DEVOTION|SANSKAR|AASTHA|AASTIK|DIVYA|ISHWAR|SHUBH|SHRADHA|SATSANG|PRARTHANA|JINVANI|SAI TV|SVBC|ARADANA|ANGEL TV|MADHA TV|NAMBIKKAI|SHALOM|GOODNESS TV|HARVEST|CALVERY|SUBHARTI|AADINATH|SARV DHARAM|PEACE OF MIND|PARAS GOLD|DHARM|GOODNEWS TV|PYRAMID MEDITATION|DIVYAVANI|AASEERVATHAM/.test(c)) return 'Devotional';
+  if (/MUSIC|MTV|VH1|ZING|BALLE BALLE|TASHAN|PTC MUSIC|9X MUSIC|B4U MUSIC|MAIBOLI|SANGEET|RAJ MUSIX|DHOOM MUSIC|7S MUSIC|PUBLIC MUSIC|9X JALWA|HITS/.test(c)) return 'Music';
+  return 'Regional';
+}
 
-  /* ── Dark mode ── */
-  function toggleDark() {
-    const html = document.documentElement;
-    const isDark = html.getAttribute('data-theme') === 'dark';
-    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
-    document.getElementById('toggleLabel').textContent = isDark ? '☀ Light' : '🌙 Dark';
-    localStorage.setItem('tvGuideTheme', isDark ? 'light' : 'dark');
-  }
+/* ─────────────────────────────────────
+   TAB / CATEGORY SWITCHING
+───────────────────────────────────── */
+function switchTab(tab) {
+  if (activeTab === tab) return;
+  activeTab = tab;
+  activeCat = 'All';
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab' + cap(tab)).classList.add('active');
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === 'All'));
+  document.getElementById('searchInput').value = '';
+  rebuildLangOptions();
+  applyFilters();
+}
 
-  function initTheme() {
-    const saved = localStorage.getItem('tvGuideTheme') || 'light';
-    document.documentElement.setAttribute('data-theme', saved);
-    document.getElementById('toggleLabel').textContent = saved === 'dark' ? '🌙 Dark' : '☀ Light';
-  }
+function switchCat(cat) {
+  if (activeCat === cat) return;
+  activeCat = cat;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
+  rebuildLangOptions();
+  applyFilters();
+}
 
-  /* ── Tab switch ── */
-  function switchTab(tab) {
-    if (activeTab === tab) return;
-    activeTab = tab;
-    activeCat = 'All';
+/* ─────────────────────────────────────
+   LANGUAGE DROPDOWN
+───────────────────────────────────── */
+function rebuildLangOptions() {
+  const sel = document.getElementById('langSelect');
+  const cur = sel.value;
+  const type = cap(activeTab);
+  const langs = [...new Set(
+    allChannels
+      .filter(c => c.type === type && (activeCat === 'All' || getCategory(c) === activeCat))
+      .map(c => c.language)
+  )].sort();
+  while (sel.options.length > 1) sel.remove(1);
+  langs.forEach(l => {
+    const o = document.createElement('option');
+    o.value = l; o.textContent = l;
+    sel.appendChild(o);
+  });
+  sel.value = langs.includes(cur) ? cur : '';
+}
 
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+/* ─────────────────────────────────────
+   FILTERING + RENDER
+───────────────────────────────────── */
+function applyFilters() {
+  const query = document.getElementById('searchInput').value.trim().toLowerCase();
+  const lang  = document.getElementById('langSelect').value;
+  const type  = cap(activeTab);
 
-    document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === 'All'));
+  // brief spinner flash
+  showSpinner(true);
 
-    document.getElementById('searchInput').value = '';
-    rebuildLangOptions();
-    applyFilters();
-  }
-
-  /* ── Category switch ── */
-  function switchCat(cat) {
-    if (activeCat === cat) return;
-    activeCat = cat;
-    document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
-    rebuildLangOptions();
-    applyFilters();
-  }
-
-  /* ── Language options ── */
-  function rebuildLangOptions() {
-    const select = document.getElementById('langSelect');
-    const current = select.value;
-    const type = capitalize(activeTab);
-
-    const langs = [...new Set(
-      allChannels
-        .filter(c => c.type === type && (activeCat === 'All' || getCategory(c) === activeCat))
-        .map(c => c.language)
-    )].sort();
-
-    while (select.options.length > 1) select.remove(1);
-    langs.forEach(l => {
-      const o = document.createElement('option');
-      o.value = l; o.textContent = l;
-      select.appendChild(o);
-    });
-    select.value = langs.includes(current) ? current : '';
-  }
-
-  /* ── Filters ── */
-  function applyFilters() {
-    const query = document.getElementById('searchInput').value.trim().toLowerCase();
-    const lang  = document.getElementById('langSelect').value;
-    const type  = capitalize(activeTab);
-
+  setTimeout(() => {
     const filtered = allChannels.filter(c => {
       if (c.type !== type) return false;
       if (activeCat !== 'All' && getCategory(c) !== activeCat) return false;
       if (lang && c.language !== lang) return false;
-      if (query) {
-        if (!c.name.toLowerCase().includes(query) && !String(c.number).includes(query)) return false;
-      }
+      if (query && !c.name.toLowerCase().includes(query) && !String(c.number).includes(query)) return false;
       return true;
     });
-
     renderTable(filtered);
     updateResultBar(filtered.length, query || lang || activeCat !== 'All');
+    showSpinner(false);
+  }, 80);
+}
+
+function showSpinner(v) {
+  document.getElementById('spinnerWrap').classList.toggle('show', v);
+  document.getElementById('tableScroll').style.display = v ? 'none' : '';
+  document.getElementById('emptyState').classList.remove('show');
+}
+
+function renderTable(rows) {
+  const tbody = document.getElementById('mainTbody');
+  const empty = document.getElementById('emptyState');
+  const tbl   = document.getElementById('mainTable');
+  if (rows.length === 0) {
+    tbody.innerHTML = '';
+    tbl.style.display = 'none';
+    empty.classList.add('show');
+  } else {
+    tbl.style.display = '';
+    empty.classList.remove('show');
+    tbody.innerHTML = rows.map(c => `
+      <tr>
+        <td><span class="ch-num-badge">${c.number}</span></td>
+        <td><span class="ch-name">${esc(c.name)}</span></td>
+        <td><span class="lang-tag">${esc(c.language)}</span></td>
+      </tr>
+    `).join('');
+    tbody.classList.remove('table-fade');
+    void tbody.offsetWidth;
+    tbody.classList.add('table-fade');
   }
+}
 
-  /* ── Render ── */
-  function renderTable(rows) {
-    const tbody  = document.getElementById('mainTbody');
-    const empty  = document.getElementById('emptyState');
-    const tbl    = document.getElementById('mainTable');
+function updateResultBar(count, hasFilters) {
+  document.getElementById('resultCount').textContent = `${count} channel${count !== 1 ? 's' : ''}`;
+  document.getElementById('clearBtn').classList.toggle('show', !!hasFilters);
+}
 
-    if (rows.length === 0) {
-      tbody.innerHTML = '';
-      tbl.style.display = 'none';
-      empty.classList.add('show');
-    } else {
-      tbl.style.display = '';
-      empty.classList.remove('show');
-      tbody.innerHTML = rows.map(c => `
-        <tr>
-          <td><span class="ch-num">${c.number}</span></td>
-          <td><span class="ch-name">${escHtml(c.name)}</span></td>
-          <td><span class="lang-badge">${escHtml(c.language)}</span></td>
-        </tr>
-      `).join('');
-      tbody.classList.remove('table-fade');
-      void tbody.offsetWidth; // reflow
-      tbody.classList.add('table-fade');
+function clearFilters() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('langSelect').value = '';
+  activeCat = 'All';
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === 'All'));
+  rebuildLangOptions();
+  applyFilters();
+}
+
+/* ─────────────────────────────────────
+   HELPERS
+───────────────────────────────────── */
+function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ─────────────────────────────────────
+   BOOT / DATA LOADING
+───────────────────────────────────── */
+async function loadData() {
+  const res = await fetch('channels.json');
+  defaultChannels = await res.json();
+
+  const stored = localStorage.getItem(LS_KEY);
+  if (stored) {
+    try {
+      allChannels = JSON.parse(stored);
+    } catch(e) {
+      allChannels = defaultChannels;
     }
+  } else {
+    allChannels = defaultChannels;
   }
 
-  /* ── Result bar ── */
-  function updateResultBar(count, hasFilters) {
-    document.getElementById('resultCount').innerHTML =
-      `Showing <span>${count}</span> channel${count !== 1 ? 's' : ''}`;
-    document.getElementById('clearBtn').classList.toggle('show', !!hasFilters);
-  }
+  rebuildLangOptions();
+  applyFilters();
+}
 
-  /* ── Clear ── */
-  function clearFilters() {
-    document.getElementById('searchInput').value = '';
-    document.getElementById('langSelect').value = '';
-    activeCat = 'All';
-    document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === 'All'));
-    rebuildLangOptions();
-    applyFilters();
+/* ─────────────────────────────────────
+   ADMIN — MODAL OPEN/CLOSE
+───────────────────────────────────── */
+function openAdmin() {
+  // if already logged in go straight to dash
+  if (sessionStorage.getItem('adminAuth') === '1') {
+    openDash();
+    return;
   }
+  document.getElementById('adminPass').value = '';
+  document.getElementById('loginErr').textContent = '';
+  document.getElementById('adminLoginModal').classList.add('open');
+  setTimeout(() => document.getElementById('adminPass').focus(), 200);
+}
 
-  /* ── Helpers ── */
-  function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
-  function escHtml(s) {
-    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function closeAdmin() {
+  document.getElementById('adminLoginModal').classList.remove('open');
+}
+
+function openDash() {
+  updateDataInfo();
+  parsedUpload = [];
+  document.getElementById('uploadMsg').textContent = '';
+  document.getElementById('uploadMsg').className = 'upload-msg';
+  document.getElementById('previewWrap').classList.remove('show');
+  document.getElementById('btnSave').disabled = true;
+  document.getElementById('fileInput').value = '';
+  document.getElementById('adminDashModal').classList.add('open');
+}
+
+function closeDash() {
+  document.getElementById('adminDashModal').classList.remove('open');
+}
+
+function updateDataInfo() {
+  const stored = localStorage.getItem(LS_KEY);
+  const free = allChannels.filter(c => c.type === 'Free').length;
+  const paid = allChannels.filter(c => c.type === 'Paid').length;
+  const src  = stored ? 'Custom (uploaded)' : 'Default (channels.json)';
+  document.getElementById('dataInfoText').textContent =
+    `Source: ${src} — ${allChannels.length} channels (${free} Free, ${paid} Paid)`;
+}
+
+/* ─────────────────────────────────────
+   ADMIN — AUTH
+───────────────────────────────────── */
+function doLogin() {
+  const pw = document.getElementById('adminPass').value;
+  if (pw === ADMIN_PW) {
+    sessionStorage.setItem('adminAuth', '1');
+    closeAdmin();
+    openDash();
+  } else {
+    document.getElementById('loginErr').textContent = 'Incorrect password. Please try again.';
+    document.getElementById('adminPass').select();
   }
+}
 
-  /* ── Boot ── */
-  async function loadData() {
-    const res = await fetch('channels.json');
-    allChannels = await res.json();
-    rebuildLangOptions();
-    applyFilters();
-  }
+function doLogout() {
+  sessionStorage.removeItem('adminAuth');
+  closeDash();
+}
 
-  initTheme();
-  loadData();
+/* ─────────────────────────────────────
+   ADMIN — FILE UPLOAD (SheetJS)
+───────────────────────────────────── */
+function handleFile(file) {
+  if (!file) return;
+  const msg = document.getElementById('uploadMsg');
+  msg.className = 'upload-msg';
+  msg.textContent = 'Reading file…';
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const wb = XLSX.read(e.target.result, { type: 'array' });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const raw = XLSX.utils.sheet_to_json(ws, { defval: '' });
+
+      if (!raw.length) {
+        showUploadErr('File is empty.');
+        return;
+      }
+
+      // Normalize column names (lowercase, trim)
+      const rows = raw.map(r => {
+        const norm = {};
+        Object.keys(r).forEach(k => { norm[k.trim().toLowerCase()] = r[k]; });
+        return norm;
+      });
+
+      // Validate required columns
+      const required = ['number','name','language','type'];
+      const keys = Object.keys(rows[0]);
+      const missing = required.filter(k => !keys.includes(k));
+      if (missing.length) {
+        showUploadErr(`Missing required column(s): ${missing.join(', ')}`);
+        return;
+      }
+
+      // Validate type values
+      const badType = rows.filter(r => !['free','paid'].includes(String(r.type).trim().toLowerCase()));
+      if (badType.length) {
+        showUploadErr(`${badType.length} row(s) have invalid "type" (must be Free or Paid). Fix and re-upload.`);
+        return;
+      }
+
+      // Normalise
+      parsedUpload = rows.map(r => ({
+        number:   r.number,
+        name:     String(r.name).trim(),
+        language: String(r.language).trim(),
+        type:     String(r.type).trim().charAt(0).toUpperCase() + String(r.type).trim().slice(1).toLowerCase()
+      }));
+
+      // Show preview
+      showPreview(parsedUpload);
+      msg.className = 'upload-msg ok';
+      msg.textContent = `✓ Parsed ${parsedUpload.length} channels successfully. Review below, then save.`;
+      document.getElementById('btnSave').disabled = false;
+
+    } catch(err) {
+      showUploadErr('Failed to parse file: ' + err.message);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function showUploadErr(txt) {
+  const msg = document.getElementById('uploadMsg');
+  msg.className = 'upload-msg err';
+  msg.textContent = '✗ ' + txt;
+  document.getElementById('previewWrap').classList.remove('show');
+  document.getElementById('btnSave').disabled = true;
+  parsedUpload = [];
+}
+
+function showPreview(data) {
+  const tbody = document.getElementById('previewTbody');
+  const preview = data.slice(0, 50);
+  tbody.innerHTML = preview.map(c => `
+    <tr>
+      <td>${esc(String(c.number))}</td>
+      <td>${esc(c.name)}</td>
+      <td>${esc(c.language)}</td>
+      <td>${esc(c.type)}</td>
+    </tr>
+  `).join('');
+  document.getElementById('previewCount').textContent =
+    `Showing first ${Math.min(50, data.length)} of ${data.length} rows`;
+  document.getElementById('previewWrap').classList.add('show');
+}
+
+/* ─────────────────────────────────────
+   ADMIN — SAVE / RESET
+───────────────────────────────────── */
+function saveData() {
+  if (!parsedUpload.length) return;
+  allChannels = parsedUpload;
+  localStorage.setItem(LS_KEY, JSON.stringify(allChannels));
+  updateDataInfo();
+  // re-render main table
+  activeCat = 'All';
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === 'All'));
+  document.getElementById('searchInput').value = '';
+  rebuildLangOptions();
+  applyFilters();
+
+  const msg = document.getElementById('uploadMsg');
+  msg.className = 'upload-msg ok';
+  msg.textContent = `✓ ${allChannels.length} channels saved and applied!`;
+  document.getElementById('btnSave').disabled = true;
+}
+
+function resetData() {
+  if (!confirm('Reset to default channel data? This will remove any uploaded data.')) return;
+  localStorage.removeItem(LS_KEY);
+  allChannels = [...defaultChannels];
+  parsedUpload = [];
+  document.getElementById('uploadMsg').textContent = '';
+  document.getElementById('uploadMsg').className = 'upload-msg';
+  document.getElementById('previewWrap').classList.remove('show');
+  document.getElementById('btnSave').disabled = true;
+  document.getElementById('fileInput').value = '';
+  updateDataInfo();
+  activeCat = 'All';
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === 'All'));
+  document.getElementById('searchInput').value = '';
+  rebuildLangOptions();
+  applyFilters();
+}
+
+/* ─────────────────────────────────────
+   DRAG & DROP on upload zone
+───────────────────────────────────── */
+(function() {
+  const zone = document.getElementById('uploadZone');
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('drag-over');
+    const f = e.dataTransfer.files[0];
+    if (f) handleFile(f);
+  });
+})();
+
+/* ─────────────────────────────────────
+   CLOSE MODALS ON OVERLAY CLICK
+───────────────────────────────────── */
+document.getElementById('adminLoginModal').addEventListener('click', function(e) {
+  if (e.target === this) closeAdmin();
+});
+document.getElementById('adminDashModal').addEventListener('click', function(e) {
+  if (e.target === this) closeDash();
+});
+
+/* ─────────────────────────────────────
+   INIT
+───────────────────────────────────── */
+initTheme();
+loadData();
 </script>
 </body>
 </html>
