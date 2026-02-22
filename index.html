@@ -4,98 +4,115 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TV Channel Guide</title>
-  <!-- SheetJS for Excel upload in Admin -->
   <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     /* ── Design tokens ── */
     :root {
-      --green:        #1f6f3d;
-      --green-mid:    #27a25a;
-      --green-light:  #4ade80;
-      --gold:         #c8972a;
-      --gold-light:   #f0c060;
-      --radius:       16px;
-      --radius-sm:    50px;
-      --transition:   all 0.3s cubic-bezier(.4,0,.2,1);
-      --header-h:     68px;
+      --radius:     16px;
+      --radius-sm:  50px;
+      --transition: all 0.3s cubic-bezier(.4,0,.2,1);
+      --header-h:   68px;
     }
 
-    /* ── Light theme ── */
+    /* ── Light theme — lavender / soft purple ── */
     [data-theme="light"] {
-      --bg:              linear-gradient(145deg,#e8f5ee 0%,#eef4fb 40%,#f0e8ff 100%);
-      --glow:            radial-gradient(ellipse 70% 40% at 50% -10%,rgba(31,111,61,.18) 0%,transparent 70%);
-      --header-bg:       rgba(255,255,255,.72);
-      --header-border:   rgba(31,111,61,.18);
-      --surface:         rgba(255,255,255,.78);
-      --surface-border:  rgba(31,111,61,.15);
-      --text:            #0f2a1a;
-      --text-muted:      #5a7a68;
-      --text-head:       #1f6f3d;
-      --input-bg:        rgba(255,255,255,.92);
-      --input-border:    rgba(31,111,61,.22);
-      --row-hover:       rgba(31,111,61,.06);
+      --bg:              linear-gradient(145deg,#ede9f8 0%,#f3eeff 40%,#e8f0ff 100%);
+      --glow:            radial-gradient(ellipse 70% 40% at 50% -10%,rgba(124,58,237,.12) 0%,transparent 70%);
+      --header-bg:       rgba(255,255,255,.78);
+      --header-border:   rgba(124,58,237,.18);
+      --surface:         rgba(255,255,255,.82);
+      --surface-border:  rgba(124,58,237,.14);
+      --text:            #1e1040;
+      --text-muted:      #6b5fa0;
+      --text-head:       #5b21b6;
+      --input-bg:        rgba(255,255,255,.95);
+      --input-border:    rgba(124,58,237,.22);
+      --row-hover:       rgba(124,58,237,.06);
       --row-border:      rgba(0,0,0,.05);
-      --thead-bg:        rgba(31,111,61,.07);
-      --badge-bg:        rgba(31,111,61,.1);
-      --badge-color:     #1f6f3d;
-      --badge-border:    rgba(31,111,61,.22);
-      --cat-idle:        rgba(31,111,61,.08);
-      --cat-idle-text:   #1f6f3d;
-      --cat-idle-border: rgba(31,111,61,.2);
+      --thead-bg:        rgba(124,58,237,.07);
+      --badge-bg:        rgba(124,58,237,.1);
+      --badge-color:     #5b21b6;
+      --badge-border:    rgba(124,58,237,.22);
+      --cat-idle:        rgba(124,58,237,.08);
+      --cat-idle-text:   #5b21b6;
+      --cat-idle-border: rgba(124,58,237,.2);
       --cat-active-text: #fff;
-      --footer-color:    #7a9a88;
-      --toggle-bg:       #d1e8db;
-      --toggle-knob:     #1f6f3d;
-      --ch-num-color:    #1f6f3d;
-      --shadow:          0 8px 32px rgba(31,111,61,.12);
-      --header-shadow:   0 2px 20px rgba(31,111,61,.12);
-      --title-color:     #0f2a1a;
-      --select-bg:       rgba(255,255,255,.96);
-      --select-color:    #0f2a1a;
+      --footer-color:    #8b7cc0;
+      --toggle-bg:       #ddd6fe;
+      --toggle-knob:     #7c3aed;
+      --shadow:          0 8px 32px rgba(124,58,237,.12);
+      --header-shadow:   0 2px 20px rgba(124,58,237,.12);
+      --title-color:     #1e1040;
+      --select-bg:       rgba(255,255,255,.98);
+      --select-color:    #1e1040;
       --modal-bg:        rgba(0,0,0,.45);
       --modal-surface:   #fff;
-      --modal-text:      #0f2a1a;
-      --modal-border:    rgba(31,111,61,.18);
+      --modal-text:      #1e1040;
+      --modal-border:    rgba(124,58,237,.18);
+      /* accent vars used throughout */
+      --accent:          #7c3aed;
+      --accent-mid:      #8b5cf6;
+      --accent-light:    #a78bfa;
+      --accent-glow:     rgba(124,58,237,.32);
+      --accent-ring:     rgba(124,58,237,.18);
+      /* paid variation */
+      --paid-color:      #b45309;
+      --paid-idle-bg:    rgba(180,83,9,.1);
+      --paid-idle-border:rgba(180,83,9,.28);
+      --paid-active-bg:  linear-gradient(135deg,#b45309,#d97706,#c084fc);
+      --paid-glow:       rgba(180,83,9,.38);
+      /* result badge */
+      --result-bg:       linear-gradient(135deg,#7c3aed,#8b5cf6);
     }
 
-    /* ── Dark theme ── */
+    /* ── Dark theme — deep navy / purple ── */
     [data-theme="dark"] {
-      --bg:              linear-gradient(145deg,#071810 0%,#0d2818 40%,#101820 100%);
-      --glow:            radial-gradient(ellipse 70% 40% at 50% -10%,rgba(31,111,61,.28) 0%,transparent 70%);
-      --header-bg:       rgba(10,30,18,.82);
-      --header-border:   rgba(31,111,61,.3);
+      --bg:              linear-gradient(145deg,#0d0720 0%,#130a2e 40%,#0a0f24 100%);
+      --glow:            radial-gradient(ellipse 70% 40% at 50% -10%,rgba(124,58,237,.25) 0%,transparent 70%);
+      --header-bg:       rgba(13,7,32,.85);
+      --header-border:   rgba(124,58,237,.3);
       --surface:         rgba(255,255,255,.05);
       --surface-border:  rgba(255,255,255,.09);
-      --text:            #dff5eb;
-      --text-muted:      #7ab594;
-      --text-head:       #4ade80;
+      --text:            #ede9f8;
+      --text-muted:      #9d8ec8;
+      --text-head:       #c4b5fd;
       --input-bg:        rgba(255,255,255,.07);
       --input-border:    rgba(255,255,255,.14);
-      --row-hover:       rgba(31,111,61,.14);
+      --row-hover:       rgba(124,58,237,.14);
       --row-border:      rgba(255,255,255,.05);
-      --thead-bg:        rgba(31,111,61,.18);
-      --badge-bg:        rgba(31,111,61,.22);
-      --badge-color:     #6bde9e;
-      --badge-border:    rgba(31,111,61,.38);
+      --thead-bg:        rgba(124,58,237,.18);
+      --badge-bg:        rgba(124,58,237,.22);
+      --badge-color:     #c4b5fd;
+      --badge-border:    rgba(124,58,237,.38);
       --cat-idle:        rgba(255,255,255,.06);
-      --cat-idle-text:   #6bde9e;
+      --cat-idle-text:   #c4b5fd;
       --cat-idle-border: rgba(255,255,255,.12);
       --cat-active-text: #fff;
-      --footer-color:    #4a7a58;
-      --toggle-bg:       #1a3a28;
-      --toggle-knob:     #4ade80;
-      --ch-num-color:    #4ade80;
+      --footer-color:    #6b5fa0;
+      --toggle-bg:       #2e1f5e;
+      --toggle-knob:     #a78bfa;
       --shadow:          0 8px 32px rgba(0,0,0,.45);
       --header-shadow:   0 2px 24px rgba(0,0,0,.5);
-      --title-color:     #dff5eb;
-      --select-bg:       #0d2818;
-      --select-color:    #dff5eb;
+      --title-color:     #ede9f8;
+      --select-bg:       #130a2e;
+      --select-color:    #ede9f8;
       --modal-bg:        rgba(0,0,0,.7);
-      --modal-surface:   #0e2218;
-      --modal-text:      #dff5eb;
-      --modal-border:    rgba(31,111,61,.35);
+      --modal-surface:   #130a2e;
+      --modal-text:      #ede9f8;
+      --modal-border:    rgba(124,58,237,.35);
+      --accent:          #7c3aed;
+      --accent-mid:      #8b5cf6;
+      --accent-light:    #a78bfa;
+      --accent-glow:     rgba(124,58,237,.4);
+      --accent-ring:     rgba(124,58,237,.25);
+      --paid-color:      #fbbf24;
+      --paid-idle-bg:    rgba(251,191,36,.1);
+      --paid-idle-border:rgba(251,191,36,.28);
+      --paid-active-bg:  linear-gradient(135deg,#d97706,#fbbf24,#a78bfa);
+      --paid-glow:       rgba(251,191,36,.35);
+      --result-bg:       linear-gradient(135deg,#7c3aed,#a78bfa);
     }
 
     /* ── Base ── */
@@ -154,12 +171,6 @@
       flex-shrink: 0;
       display: block;
     }
-    /* fallback SVG logo if no image */
-    .logo-svg {
-      height: 42px;
-      width: 42px;
-      flex-shrink: 0;
-    }
     .brand-title {
       font-size: clamp(1.05rem, 3.5vw, 1.5rem);
       font-weight: 800;
@@ -170,11 +181,6 @@
       letter-spacing: -.3px;
       transition: color .3s;
     }
-    .brand-title em {
-      font-style: normal;
-      color: var(--green);
-    }
-    [data-theme="dark"] .brand-title em { color: var(--green-light); }
 
     /* ── Dark toggle ── */
     .dark-toggle {
@@ -190,7 +196,7 @@
       transition: var(--transition);
       flex-shrink: 0;
     }
-    .dark-toggle:hover { box-shadow: 0 3px 14px rgba(31,111,61,.2); transform: translateY(-1px); }
+    .dark-toggle:hover { box-shadow: 0 3px 14px var(--accent-glow); transform: translateY(-1px); }
     .toggle-label {
       font-size: 0.78rem;
       font-weight: 600;
@@ -238,11 +244,9 @@
       color: var(--title-color);
       letter-spacing: -.4px;
     }
-    .page-title-block h2 em { font-style: normal; color: var(--green); }
-    [data-theme="dark"] .page-title-block h2 em { color: var(--green-light); }
     .title-bar {
       width: 72px; height: 4px;
-      background: linear-gradient(90deg,var(--green),var(--green-light));
+      background: linear-gradient(90deg,var(--accent),var(--accent-light));
       border-radius: 2px;
       margin: 10px auto 6px;
     }
@@ -272,33 +276,32 @@
     }
     .tab-btn .dot { width:8px;height:8px;border-radius:50%;background:currentColor; }
 
-    /* Free */
+    /* Free — purple */
     .tab-btn.free {
-      background: rgba(31,111,61,.1);
-      color: var(--green);
-      border-color: rgba(31,111,61,.25);
+      background: var(--cat-idle);
+      color: var(--accent-mid);
+      border-color: rgba(124,58,237,.25);
     }
-    [data-theme="dark"] .tab-btn.free { color: var(--green-light); }
+    [data-theme="dark"] .tab-btn.free { color: var(--accent-light); }
     .tab-btn.free.active, .tab-btn.free:hover {
-      background: linear-gradient(135deg,var(--green),var(--green-mid));
+      background: linear-gradient(135deg,var(--accent),var(--accent-mid));
       color: #fff;
       border-color: transparent;
-      box-shadow: 0 6px 22px rgba(31,111,61,.38);
+      box-shadow: 0 6px 22px var(--accent-glow);
       transform: translateY(-2px);
     }
 
-    /* Paid — gold-green gradient variation */
+    /* Paid — gold-amber */
     .tab-btn.paid {
-      background: rgba(200,151,42,.1);
-      color: var(--gold);
-      border-color: rgba(200,151,42,.28);
+      background: var(--paid-idle-bg);
+      color: var(--paid-color);
+      border-color: var(--paid-idle-border);
     }
-    [data-theme="dark"] .tab-btn.paid { color: var(--gold-light); }
     .tab-btn.paid.active, .tab-btn.paid:hover {
-      background: linear-gradient(135deg,var(--gold),#e8b84b,#80c270);
+      background: var(--paid-active-bg);
       color: #fff;
       border-color: transparent;
-      box-shadow: 0 6px 22px rgba(200,151,42,.38);
+      box-shadow: 0 6px 22px var(--paid-glow);
       transform: translateY(-2px);
     }
 
@@ -331,12 +334,12 @@
       transition: var(--transition);
       white-space: nowrap;
     }
-    .cat-btn:hover { transform:translateY(-1px); box-shadow:0 4px 14px rgba(31,111,61,.2); }
+    .cat-btn:hover { transform:translateY(-1px); box-shadow:0 4px 14px var(--accent-glow); }
     .cat-btn.active {
-      background: linear-gradient(135deg,var(--green),var(--green-mid));
+      background: linear-gradient(135deg,var(--accent),var(--accent-mid));
       color: var(--cat-active-text);
       border-color: transparent;
-      box-shadow: 0 4px 18px rgba(31,111,61,.32);
+      box-shadow: 0 4px 18px var(--accent-glow);
       transform: translateY(-1px);
     }
 
@@ -376,8 +379,8 @@
     }
     .search-input::placeholder { color:var(--text-muted); }
     .search-input:focus {
-      border-color: var(--green);
-      box-shadow: 0 0 0 3px rgba(31,111,61,.18);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-ring);
     }
     .lang-select {
       padding: 11px 36px 11px 16px;
@@ -391,12 +394,12 @@
       transition: border-color .2s, box-shadow .2s;
       min-width: 155px;
       -webkit-appearance:none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%231f6f3d' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
       background-repeat:no-repeat;
       background-position:right 14px center;
     }
     .lang-select option { background:var(--select-bg);color:var(--select-color); }
-    .lang-select:focus { border-color:var(--green);box-shadow:0 0 0 3px rgba(31,111,61,.18); }
+    .lang-select:focus { border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-ring); }
 
     /* ── Result bar ── */
     .result-bar {
@@ -414,12 +417,12 @@
       align-items: center;
       gap: 6px;
       padding: 4px 14px;
-      background: linear-gradient(135deg,var(--green),var(--green-mid));
+      background: var(--result-bg);
       border-radius: 50px;
       color: #fff;
       font-size: .82rem;
       font-weight: 700;
-      box-shadow: 0 2px 10px rgba(31,111,61,.3);
+      box-shadow: 0 2px 10px var(--accent-glow);
     }
     .clear-btn {
       display:none;
@@ -449,7 +452,7 @@
     .spinner {
       width:36px;height:36px;
       border:3px solid var(--cat-idle-border);
-      border-top-color: var(--green);
+      border-top-color: var(--accent);
       border-radius:50%;
       animation:spin .7s linear infinite;
     }
@@ -486,7 +489,7 @@
       border-bottom:1px solid var(--row-border);
       transition:background .15s;
     }
-    tbody tr:nth-child(even) { background:rgba(31,111,61,.025); }
+    tbody tr:nth-child(even) { background:rgba(124,58,237,.025); }
     [data-theme="dark"] tbody tr:nth-child(even) { background:rgba(255,255,255,.025); }
     tbody tr:last-child { border-bottom:none; }
     tbody tr:hover { background:var(--row-hover) !important; }
@@ -498,13 +501,13 @@
       justify-content:center;
       min-width:46px;
       padding:3px 8px;
-      background:linear-gradient(135deg,var(--green),var(--green-mid));
+      background:linear-gradient(135deg,var(--accent),var(--accent-mid));
       color:#fff;
       border-radius:8px;
       font-weight:800;
       font-size:.88rem;
       font-variant-numeric:tabular-nums;
-      box-shadow:0 2px 6px rgba(31,111,61,.3);
+      box-shadow:0 2px 6px var(--accent-glow);
     }
     .ch-name { font-weight:500;color:var(--text); }
     .lang-tag {
@@ -537,7 +540,7 @@
     .empty-state.show { display:flex; }
     .empty-icon {
       width:62px;height:62px;border-radius:50%;
-      background:rgba(31,111,61,.1);
+      background:var(--cat-idle);
       display:flex;align-items:center;justify-content:center;
       font-size:1.8rem;
     }
@@ -545,15 +548,18 @@
     .empty-state p  { color:var(--text-muted);font-size:.87rem; }
     .empty-clear-btn {
       padding:9px 22px;
-      background:rgba(31,111,61,.12);
-      border:1.5px solid rgba(31,111,61,.3);
+      background:var(--cat-idle);
+      border:1.5px solid var(--cat-idle-border);
       border-radius:50px;
-      color:var(--green);
+      color:var(--cat-idle-text);
       font-size:.88rem;font-weight:600;cursor:pointer;
       transition:var(--transition);
     }
-    [data-theme="dark"] .empty-clear-btn { color:var(--green-light); }
-    .empty-clear-btn:hover { background:rgba(31,111,61,.24); color:#fff; }
+    .empty-clear-btn:hover {
+      background:linear-gradient(135deg,var(--accent),var(--accent-mid));
+      color:#fff;
+      border-color:transparent;
+    }
 
     /* ── Footer ── */
     footer {
@@ -564,8 +570,7 @@
       position:relative;
       z-index:1;
     }
-    .footer-logo { height:28px;width:auto;object-fit:contain;display:inline-block;margin-bottom:6px;opacity:.75; }
-    .footer-logo-svg { height:28px;width:28px;display:inline-block;margin-bottom:6px;opacity:.7; }
+    .footer-logo { height:28px;width:auto;object-fit:contain;display:inline-block;margin-bottom:6px;opacity:.8; }
     .admin-link {
       margin-left:10px;
       color:var(--text-muted);
@@ -646,8 +651,8 @@
       margin-bottom:14px;
     }
     .admin-form input[type="password"]:focus {
-      border-color:var(--green);
-      box-shadow:0 0 0 3px rgba(31,111,61,.18);
+      border-color:var(--accent);
+      box-shadow:0 0 0 3px var(--accent-ring);
     }
     .admin-form-err {
       font-size:.82rem;color:#ef4444;
@@ -656,15 +661,15 @@
     .btn-primary {
       width:100%;
       padding:12px;
-      background:linear-gradient(135deg,var(--green),var(--green-mid));
+      background:linear-gradient(135deg,var(--accent),var(--accent-mid));
       color:#fff;
       border:none;border-radius:12px;
       font-size:.95rem;font-weight:700;
       cursor:pointer;
       transition:var(--transition);
-      box-shadow:0 4px 16px rgba(31,111,61,.3);
+      box-shadow:0 4px 16px var(--accent-glow);
     }
-    .btn-primary:hover { transform:translateY(-1px);box-shadow:0 6px 20px rgba(31,111,61,.4); }
+    .btn-primary:hover { transform:translateY(-1px);box-shadow:0 6px 20px var(--accent-glow); }
 
     /* ── Admin dashboard ── */
     .admin-dash { display:none; }
@@ -691,8 +696,8 @@
     }
     .upload-zone:hover,
     .upload-zone.drag-over {
-      border-color:var(--green);
-      background:rgba(31,111,61,.06);
+      border-color:var(--accent);
+      background:rgba(124,58,237,.06);
     }
     .upload-zone input[type="file"] {
       position:absolute;inset:0;opacity:0;cursor:pointer;
@@ -703,15 +708,12 @@
     .upload-msg {
       margin-top:10px;font-size:.83rem;min-height:18px;font-weight:600;
     }
-    .upload-msg.ok  { color:var(--green); }
-    [data-theme="dark"] .upload-msg.ok { color:var(--green-light); }
+    .upload-msg.ok  { color:var(--accent-mid); }
+    [data-theme="dark"] .upload-msg.ok { color:var(--accent-light); }
     .upload-msg.err { color:#ef4444; }
 
     /* preview table */
-    .preview-wrap {
-      display:none;
-      margin-top:14px;
-    }
+    .preview-wrap { display:none;margin-top:14px; }
     .preview-wrap.show { display:block; }
     .preview-scroll { overflow-x:auto;max-height:220px;overflow-y:auto; }
     .preview-tbl { width:100%;border-collapse:collapse;font-size:.8rem; }
@@ -724,11 +726,11 @@
     .btn-save {
       flex:1;
       padding:10px 18px;
-      background:linear-gradient(135deg,var(--green),var(--green-mid));
+      background:linear-gradient(135deg,var(--accent),var(--accent-mid));
       color:#fff;border:none;border-radius:10px;
       font-size:.88rem;font-weight:700;cursor:pointer;
       transition:var(--transition);
-      box-shadow:0 3px 12px rgba(31,111,61,.28);
+      box-shadow:0 3px 12px var(--accent-glow);
     }
     .btn-save:hover { transform:translateY(-1px); }
     .btn-save:disabled { opacity:.45;cursor:not-allowed;transform:none; }
@@ -754,8 +756,8 @@
       transition:var(--transition);
       margin-top:4px;
     }
-    .btn-logout:hover { border-color:var(--green);color:var(--green); }
-    [data-theme="dark"] .btn-logout:hover { color:var(--green-light); }
+    .btn-logout:hover { border-color:var(--accent);color:var(--accent-mid); }
+    [data-theme="dark"] .btn-logout:hover { color:var(--accent-light); }
 
     /* current data info */
     .data-info {
@@ -768,13 +770,12 @@
     }
     .data-dot {
       width:8px;height:8px;border-radius:50%;
-      background:var(--green);flex-shrink:0;
+      background:var(--accent-mid);flex-shrink:0;
     }
-    [data-theme="dark"] .data-dot { background:var(--green-light); }
 
     /* ── Responsive ── */
     @media (max-width:600px) {
-      .logo-img,.logo-svg { height:36px; }
+      .logo-img { height:36px; }
       .filter-bar { gap:8px; }
       .lang-select { min-width:130px;width:100%; }
       .search-wrap { min-width:100%; }
@@ -788,30 +789,11 @@
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════
-     STICKY GLASSMORPHISM HEADER
-══════════════════════════════════════════ -->
+<!-- STICKY HEADER -->
 <header class="site-header">
   <div class="header-brand">
-    <!-- Inline SVG logo (replace src with logo.png once uploaded) -->
-    <svg class="logo-svg" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <rect width="42" height="42" rx="10" fill="url(#lg)" />
-      <rect x="9" y="12" width="24" height="16" rx="3" fill="white" opacity=".92"/>
-      <rect x="11" y="14" width="20" height="12" rx="2" fill="url(#lg2)"/>
-      <rect x="17" y="29" width="8" height="3" rx="1.5" fill="white" opacity=".7"/>
-      <rect x="14" y="32" width="14" height="2" rx="1" fill="white" opacity=".5"/>
-      <defs>
-        <linearGradient id="lg" x1="0" y1="0" x2="42" y2="42" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#1f6f3d"/>
-          <stop offset="1" stop-color="#27a25a"/>
-        </linearGradient>
-        <linearGradient id="lg2" x1="11" y1="14" x2="31" y2="26" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#0f2a1a"/>
-          <stop offset="1" stop-color="#1f6f3d"/>
-        </linearGradient>
-      </defs>
-    </svg>
-    <span class="brand-title"><em>TV</em> Channel Guide</span>
+    <img class="logo-img" src="logo.png" alt="TV Channel Guide Logo" />
+    <span class="brand-title">TV Channel Guide</span>
   </div>
   <div class="dark-toggle" id="darkToggle" onclick="toggleDark()" title="Toggle dark/light mode">
     <span class="toggle-label" id="toggleLabel">&#9728; Light</span>
@@ -819,14 +801,12 @@
   </div>
 </header>
 
-<!-- ══════════════════════════════════════════
-     MAIN CONTENT
-══════════════════════════════════════════ -->
+<!-- MAIN CONTENT -->
 <div class="container">
 
   <!-- Page title -->
   <div class="page-title-block">
-    <h2><em>TV</em> Channel Guide</h2>
+    <h2>TV Channel Guide</h2>
     <div class="title-bar"></div>
     <p class="page-subtitle">Browse Free &amp; Paid channels &mdash; filter by category &amp; language</p>
   </div>
@@ -882,11 +862,9 @@
 
   <!-- Table card -->
   <div class="table-card" id="tableCard">
-    <!-- Spinner -->
     <div class="spinner-wrap" id="spinnerWrap">
       <div class="spinner"></div>
     </div>
-
     <div class="table-scroll" id="tableScroll">
       <table id="mainTable">
         <thead>
@@ -899,7 +877,6 @@
         <tbody id="mainTbody"></tbody>
       </table>
     </div>
-
     <div class="empty-state" id="emptyState">
       <div class="empty-icon">&#128250;</div>
       <h3>No channels found</h3>
@@ -910,35 +887,16 @@
 
 </div><!-- /container -->
 
-<!-- ══════════════════════════════════════════
-     FOOTER
-══════════════════════════════════════════ -->
+<!-- FOOTER -->
 <footer>
-  <!-- Small footer logo -->
   <div>
-    <svg class="footer-logo-svg" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <rect width="42" height="42" rx="10" fill="url(#flg)"/>
-      <rect x="9" y="12" width="24" height="16" rx="3" fill="white" opacity=".9"/>
-      <rect x="11" y="14" width="20" height="12" rx="2" fill="url(#flg2)"/>
-      <rect x="17" y="29" width="8" height="3" rx="1.5" fill="white" opacity=".7"/>
-      <rect x="14" y="32" width="14" height="2" rx="1" fill="white" opacity=".5"/>
-      <defs>
-        <linearGradient id="flg" x1="0" y1="0" x2="42" y2="42" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#1f6f3d"/><stop offset="1" stop-color="#27a25a"/>
-        </linearGradient>
-        <linearGradient id="flg2" x1="11" y1="14" x2="31" y2="26" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#0f2a1a"/><stop offset="1" stop-color="#1f6f3d"/>
-        </linearGradient>
-      </defs>
-    </svg>
+    <img class="footer-logo" src="logo.png" alt="Logo" />
   </div>
   &copy; 2026 TV Channel Guide
   <span class="admin-link" id="adminLink" onclick="openAdmin()">Admin</span>
 </footer>
 
-<!-- ══════════════════════════════════════════
-     ADMIN LOGIN MODAL
-══════════════════════════════════════════ -->
+<!-- ADMIN LOGIN MODAL -->
 <div class="modal-overlay" id="adminLoginModal">
   <div class="modal">
     <button class="modal-close" onclick="closeAdmin()" title="Close">&#10005;</button>
@@ -954,9 +912,7 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     ADMIN DASHBOARD MODAL
-══════════════════════════════════════════ -->
+<!-- ADMIN DASHBOARD MODAL -->
 <div class="modal-overlay" id="adminDashModal">
   <div class="modal" style="max-width:600px;">
     <button class="modal-close" onclick="closeDash()" title="Close">&#10005;</button>
@@ -1009,28 +965,20 @@
       <!-- Logout -->
       <button class="btn-logout" onclick="doLogout()">&#128275; Logout</button>
     </div>
-
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     JAVASCRIPT
-══════════════════════════════════════════ -->
 <script>
-/* ─────────────────────────────────────
-   STATE
-───────────────────────────────────── */
-let allChannels = [];      // active channel list
-let defaultChannels = [];  // from channels.json
-let parsedUpload = [];     // staged from excel upload
+/* STATE */
+let allChannels    = [];
+let defaultChannels = [];
+let parsedUpload   = [];
 let activeTab = 'free';
 let activeCat = 'All';
-const LS_KEY = 'tvGuideChannels';
+const LS_KEY   = 'tvGuideChannels';
 const ADMIN_PW = 'admin123';
 
-/* ─────────────────────────────────────
-   THEME
-───────────────────────────────────── */
+/* THEME */
 function toggleDark() {
   const html = document.documentElement;
   const dark = html.getAttribute('data-theme') === 'dark';
@@ -1044,9 +992,7 @@ function initTheme() {
   document.getElementById('toggleLabel').textContent = s === 'dark' ? '\uD83C\uDF19 Dark' : '\u2600 Light';
 }
 
-/* ─────────────────────────────────────
-   CATEGORY CLASSIFIER
-───────────────────────────────────── */
+/* CATEGORY CLASSIFIER */
 function getCategory(ch) {
   const c = ((ch.name || '') + ' ' + (ch.language || '')).toUpperCase();
   if (/MOVIE|CINEMA|GOLD|BOLLYWOOD|PICCHAR|PICTURE|CHITRA|CINE|FILM|BHOJPURI CINEMA|ZEE CINEMA|SONY MAX|STAR GOLD|COLORS CINEPLEX/.test(c)) return 'Movies';
@@ -1058,9 +1004,7 @@ function getCategory(ch) {
   return 'Regional';
 }
 
-/* ─────────────────────────────────────
-   TAB / CATEGORY SWITCHING
-───────────────────────────────────── */
+/* TAB / CATEGORY SWITCHING */
 function switchTab(tab) {
   if (activeTab === tab) return;
   activeTab = tab;
@@ -1081,9 +1025,7 @@ function switchCat(cat) {
   applyFilters();
 }
 
-/* ─────────────────────────────────────
-   LANGUAGE DROPDOWN
-───────────────────────────────────── */
+/* LANGUAGE DROPDOWN */
 function rebuildLangOptions() {
   const sel = document.getElementById('langSelect');
   const cur = sel.value;
@@ -1102,17 +1044,12 @@ function rebuildLangOptions() {
   sel.value = langs.includes(cur) ? cur : '';
 }
 
-/* ─────────────────────────────────────
-   FILTERING + RENDER
-───────────────────────────────────── */
+/* FILTERING + RENDER */
 function applyFilters() {
   const query = document.getElementById('searchInput').value.trim().toLowerCase();
   const lang  = document.getElementById('langSelect').value;
   const type  = cap(activeTab);
-
-  // brief spinner flash
   showSpinner(true);
-
   setTimeout(() => {
     const filtered = allChannels.filter(c => {
       if (c.type !== type) return false;
@@ -1171,9 +1108,7 @@ function clearFilters() {
   applyFilters();
 }
 
-/* ─────────────────────────────────────
-   HELPERS
-───────────────────────────────────── */
+/* HELPERS */
 function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 function esc(s) {
   return String(s)
@@ -1181,47 +1116,30 @@ function esc(s) {
     .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-/* ─────────────────────────────────────
-   BOOT / DATA LOADING
-───────────────────────────────────── */
+/* BOOT / DATA LOADING */
 async function loadData() {
   const res = await fetch('channels.json');
   defaultChannels = await res.json();
-
   const stored = localStorage.getItem(LS_KEY);
   if (stored) {
-    try {
-      allChannels = JSON.parse(stored);
-    } catch(e) {
-      allChannels = defaultChannels;
-    }
+    try { allChannels = JSON.parse(stored); }
+    catch(e) { allChannels = defaultChannels; }
   } else {
     allChannels = defaultChannels;
   }
-
   rebuildLangOptions();
   applyFilters();
 }
 
-/* ─────────────────────────────────────
-   ADMIN — MODAL OPEN/CLOSE
-───────────────────────────────────── */
+/* ADMIN — OPEN/CLOSE */
 function openAdmin() {
-  // if already logged in go straight to dash
-  if (sessionStorage.getItem('adminAuth') === '1') {
-    openDash();
-    return;
-  }
+  if (sessionStorage.getItem('adminAuth') === '1') { openDash(); return; }
   document.getElementById('adminPass').value = '';
   document.getElementById('loginErr').textContent = '';
   document.getElementById('adminLoginModal').classList.add('open');
   setTimeout(() => document.getElementById('adminPass').focus(), 200);
 }
-
-function closeAdmin() {
-  document.getElementById('adminLoginModal').classList.remove('open');
-}
-
+function closeAdmin() { document.getElementById('adminLoginModal').classList.remove('open'); }
 function openDash() {
   updateDataInfo();
   parsedUpload = [];
@@ -1232,11 +1150,7 @@ function openDash() {
   document.getElementById('fileInput').value = '';
   document.getElementById('adminDashModal').classList.add('open');
 }
-
-function closeDash() {
-  document.getElementById('adminDashModal').classList.remove('open');
-}
-
+function closeDash() { document.getElementById('adminDashModal').classList.remove('open'); }
 function updateDataInfo() {
   const stored = localStorage.getItem(LS_KEY);
   const free = allChannels.filter(c => c.type === 'Free').length;
@@ -1246,9 +1160,7 @@ function updateDataInfo() {
     `Source: ${src} — ${allChannels.length} channels (${free} Free, ${paid} Paid)`;
 }
 
-/* ─────────────────────────────────────
-   ADMIN — AUTH
-───────────────────────────────────── */
+/* ADMIN — AUTH */
 function doLogin() {
   const pw = document.getElementById('adminPass').value;
   if (pw === ADMIN_PW) {
@@ -1260,77 +1172,48 @@ function doLogin() {
     document.getElementById('adminPass').select();
   }
 }
+function doLogout() { sessionStorage.removeItem('adminAuth'); closeDash(); }
 
-function doLogout() {
-  sessionStorage.removeItem('adminAuth');
-  closeDash();
-}
-
-/* ─────────────────────────────────────
-   ADMIN — FILE UPLOAD (SheetJS)
-───────────────────────────────────── */
+/* ADMIN — FILE UPLOAD */
 function handleFile(file) {
   if (!file) return;
   const msg = document.getElementById('uploadMsg');
   msg.className = 'upload-msg';
   msg.textContent = 'Reading file…';
-
   const reader = new FileReader();
   reader.onload = function(e) {
     try {
       const wb = XLSX.read(e.target.result, { type: 'array' });
       const ws = wb.Sheets[wb.SheetNames[0]];
       const raw = XLSX.utils.sheet_to_json(ws, { defval: '' });
-
-      if (!raw.length) {
-        showUploadErr('File is empty.');
-        return;
-      }
-
-      // Normalize column names (lowercase, trim)
+      if (!raw.length) { showUploadErr('File is empty.'); return; }
       const rows = raw.map(r => {
         const norm = {};
         Object.keys(r).forEach(k => { norm[k.trim().toLowerCase()] = r[k]; });
         return norm;
       });
-
-      // Validate required columns
       const required = ['number','name','language','type'];
       const keys = Object.keys(rows[0]);
       const missing = required.filter(k => !keys.includes(k));
-      if (missing.length) {
-        showUploadErr(`Missing required column(s): ${missing.join(', ')}`);
-        return;
-      }
-
-      // Validate type values
+      if (missing.length) { showUploadErr(`Missing required column(s): ${missing.join(', ')}`); return; }
       const badType = rows.filter(r => !['free','paid'].includes(String(r.type).trim().toLowerCase()));
-      if (badType.length) {
-        showUploadErr(`${badType.length} row(s) have invalid "type" (must be Free or Paid). Fix and re-upload.`);
-        return;
-      }
-
-      // Normalise
+      if (badType.length) { showUploadErr(`${badType.length} row(s) have invalid "type" (must be Free or Paid).`); return; }
       parsedUpload = rows.map(r => ({
         number:   r.number,
         name:     String(r.name).trim(),
         language: String(r.language).trim(),
         type:     String(r.type).trim().charAt(0).toUpperCase() + String(r.type).trim().slice(1).toLowerCase()
       }));
-
-      // Show preview
       showPreview(parsedUpload);
       msg.className = 'upload-msg ok';
       msg.textContent = `✓ Parsed ${parsedUpload.length} channels successfully. Review below, then save.`;
       document.getElementById('btnSave').disabled = false;
-
     } catch(err) {
       showUploadErr('Failed to parse file: ' + err.message);
     }
   };
   reader.readAsArrayBuffer(file);
 }
-
 function showUploadErr(txt) {
   const msg = document.getElementById('uploadMsg');
   msg.className = 'upload-msg err';
@@ -1339,7 +1222,6 @@ function showUploadErr(txt) {
   document.getElementById('btnSave').disabled = true;
   parsedUpload = [];
 }
-
 function showPreview(data) {
   const tbody = document.getElementById('previewTbody');
   const preview = data.slice(0, 50);
@@ -1356,27 +1238,22 @@ function showPreview(data) {
   document.getElementById('previewWrap').classList.add('show');
 }
 
-/* ─────────────────────────────────────
-   ADMIN — SAVE / RESET
-───────────────────────────────────── */
+/* ADMIN — SAVE / RESET */
 function saveData() {
   if (!parsedUpload.length) return;
   allChannels = parsedUpload;
   localStorage.setItem(LS_KEY, JSON.stringify(allChannels));
   updateDataInfo();
-  // re-render main table
   activeCat = 'All';
   document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === 'All'));
   document.getElementById('searchInput').value = '';
   rebuildLangOptions();
   applyFilters();
-
   const msg = document.getElementById('uploadMsg');
   msg.className = 'upload-msg ok';
   msg.textContent = `✓ ${allChannels.length} channels saved and applied!`;
   document.getElementById('btnSave').disabled = true;
 }
-
 function resetData() {
   if (!confirm('Reset to default channel data? This will remove any uploaded data.')) return;
   localStorage.removeItem(LS_KEY);
@@ -1395,9 +1272,7 @@ function resetData() {
   applyFilters();
 }
 
-/* ─────────────────────────────────────
-   DRAG & DROP on upload zone
-───────────────────────────────────── */
+/* DRAG & DROP */
 (function() {
   const zone = document.getElementById('uploadZone');
   zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
@@ -1410,19 +1285,11 @@ function resetData() {
   });
 })();
 
-/* ─────────────────────────────────────
-   CLOSE MODALS ON OVERLAY CLICK
-───────────────────────────────────── */
-document.getElementById('adminLoginModal').addEventListener('click', function(e) {
-  if (e.target === this) closeAdmin();
-});
-document.getElementById('adminDashModal').addEventListener('click', function(e) {
-  if (e.target === this) closeDash();
-});
+/* CLOSE MODALS ON OVERLAY CLICK */
+document.getElementById('adminLoginModal').addEventListener('click', function(e) { if (e.target === this) closeAdmin(); });
+document.getElementById('adminDashModal').addEventListener('click',  function(e) { if (e.target === this) closeDash(); });
 
-/* ─────────────────────────────────────
-   INIT
-───────────────────────────────────── */
+/* INIT */
 initTheme();
 loadData();
 </script>
